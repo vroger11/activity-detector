@@ -1,15 +1,34 @@
 # Activity-Detector
-Toolbox that allow the user to detect activity on an audio signal.
+Toolbox that allow the user identify unsuppervised data on an audio signal.
 Currently on development, only few tools are available.
 
-## Requirements
-- python (tested with python 3.4)
+##Intallation
+### Requirements (manually install)
+- python3
 - numpy
 - scipy
-- matplotlib, for plotting figures
+- librosa (audio reading and extracting features)
+- matplotlib
+- scikit-learn (use machine learning algorithms)
 
-## Plot signal waveform and spectogram of a file
+### With anaconda (recommanded)
+Will coming in the future
 
+## Usage
+
+### Plot signal waveform and spectogram of a file
+
+Will change in the future to be useful
 ```bash
-  python plot_information.py <filename>
+  python src/plotting_clusters/plot_informations.py <audio filename>
 ```
+
+### Compute mfcc features
+Compute features from an audio file. The output is a csv file.
+```bash
+  python src/compute_features/mfcc.py <audio filename> <filename output> <window_features> <hop_time> <freq_min> <freq_max>
+```
+Times are in seconds and frequencies in Hz.
+
+### Get clusters
+Will come in the future
