@@ -29,13 +29,12 @@ features = np.transpose(
 
 ##learn model
 print("Learning model")
-model = gausian_mixtures.Model(n_components=20, n_iter=100, alpha=.5, verbose=0, covariance_type="diag")
+model = gausian_mixtures.Model(n_components=30, n_iter=100, alpha=.5, verbose=0, covariance_type="diag")
 model.learn_model(features)
 print("Done. Converged: ", model.dpgmm_model.converged_)
 
 ## plot result
 print("Plotting results")
-np.savetxt('features.txt', features, delimiter=" ")
 clusters = model.predic_clusters(features)
 print(np.unique(clusters))
 
@@ -45,5 +44,5 @@ for file in files:
     signal_file, fs = librosa.load(folder + file)
     signal = np.hstack((signal, signal_file)) if signal != [] else signal_file
 
-m_clusters = plt_clusters.vector_of_cluster_to_matrix(clusters, number_max=model.dpgmm_model.n_components)
+m_clusters = plt_clusters.vector_of_cluster_to_matrix(clusters) #, number_max=model.dpgmm_model.n_components)
 plt_clusters.show_audio_with_cluster(signal, fs, m_clusters, show_signal=False)
