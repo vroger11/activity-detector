@@ -65,7 +65,7 @@ def show_audio_with_cluster(signal, fs, cluster, show_signal=True, show_spectrog
     # plot cluster
     m = np.matrix(cluster)
     dim_x, dim_y = m.shape
-    cmap = plt.get_cmap("Reds")
+    cmap = plt.get_cmap("nipy_spectral")
     axarr[id_subplot].matshow(m, aspect='auto', origin='lower', extent=[0, len(signal) / fs, 0, dim_x], cmap=cmap)
     axarr[id_subplot].set_ylabel("Cluster")
     axarr[id_subplot].set_xlabel("Time in seconds")
@@ -82,11 +82,16 @@ def vector_of_cluster_to_matrix(vec, number_max=None):
     '''
 
     values_possible = list(np.unique(vec))
-    clusters = np.zeros(shape=(len(values_possible), len(vec))) if number_max == None else np.zeros(
-        shape=(number_max, len(vec)))
+    if number_max == None:
+        colors_values = 1 / (len(values_possible) + 1)
+        clusters = np.ones(shape=(len(values_possible), len(vec)))
+    else:
+        colors_values = 1/(number_max+1)
+        clusters = np.ones(shape=(number_max, len(vec)))
+
     for i in range(len(vec)):
         index = values_possible.index(vec[i]) if number_max == None else vec[i]
-        clusters[index, i] = 1
+        clusters[index, i] = colors_values*index
 
     return clusters
 
