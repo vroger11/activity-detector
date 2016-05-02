@@ -32,3 +32,9 @@ Times are in seconds and frequencies in Hz.
 
 ### Get clusters
 Will come in the future
+
+### Plot activities (clusters) of data
+Learn a VDPMM and plot the clusters founds from it. In the future it will evolve. Usage:
+ ```bash
+ python src/main.py <folder audio in>
+ ```
