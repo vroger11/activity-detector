@@ -2,33 +2,30 @@ import librosa
 import sys
 import numpy as np
 
+
 def get_mfcc_from_file(filename, windows, shift, energy=True, freq_min=1500, freq_max=8000, n_mfcc=13):
     '''
-    cf get_mfcc
+    cf get_mfcc for others parameters
 
-    :param filename:
-    :param windows:
-    :param shift:
-    :param freq_min:
-    :param freq_max:
-    :param n_mfcc:
-    :return:
+    :param filename: the path of the audio file
+    :return: the mfcc corresponding to all parameters
     '''
 
     signal, fs = librosa.load(filename)
     return get_mfcc(signal, fs, windows, shift, energy=energy, freq_min=freq_min, freq_max=freq_max, n_mfcc=n_mfcc)
 
+
 def get_mfcc(signal, fs, windows, shift, energy=True, freq_min=1500, freq_max=8000, n_mfcc=13):
     '''
     compute the mfcc features corresponding to the parameters
 
-    :param signal:
-    :param fs: sampling frequency in Hz
-    :param windows: >0 in seconds
-    :param shift: >0 in seconds
-    :param freq_min:
-    :param freq_max:
-    :return: the mfcc corresponding
+    :param signal: one channel signal
+    :param fs: sampling frequency (in Hz)
+    :param windows: > 0 (in seconds)
+    :param shift: > 0 (in seconds)
+    :param freq_min: lowest frequency (in Hz)
+    :param freq_max: highest frequency (in Hz)
+    :return: the mfcc corresponding to all parameters
     '''
 
     n_fft = round(windows * fs)
@@ -47,6 +44,7 @@ def get_mfcc(signal, fs, windows, shift, energy=True, freq_min=1500, freq_max=80
 
 
 if __name__ == '__main__':
+    # TODO use argparse
     if len(sys.argv) != 5 and len(sys.argv) != 7:
         print("usage: " + sys.argv[0] + " <audio filename> <filename output> <window_features> <hop_time>",
               file=sys.stderr)
