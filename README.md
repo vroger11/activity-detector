@@ -3,16 +3,24 @@ Toolbox that allow the user identify unsuppervised data on an audio signal.
 Currently on development, only few tools are available.
 
 ##Intallation
-### Requirements (manually install)
+
+### With anaconda (recommended)
+First install anaconda, exemple use [miniconda](http://conda.pydata.org/miniconda.html) (ligth version of anaconda).
+
+Next, create the environment with the .yml file of this project.
+```bash
+    conda env create -f conda_environment.yml
+```
+
+Don't forget to activate it using this project.
+
+### Requirements (for manually installing)
 - python3
 - numpy
 - scipy
 - librosa (audio reading and extracting features)
 - matplotlib
-- scikit-learn (use machine learning algorithms)
-
-### With anaconda (recommanded)
-Will coming in the future
+- scikit-learn (machine learning algorithms)
 
 ## Usage
 
