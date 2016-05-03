@@ -32,9 +32,9 @@ Will change in the future to be useful
 ```
 
 ### Compute mfcc features
-Compute features from an audio file. The output is a csv file.
+Compute features from a folder of audio files. The output is csv files.
 ```bash
-  python src/compute_features/mfcc.py <audio filename> <filename output> <window_features> <hop_time> <freq_min> <freq_max>
+  python src/compute_features/mfcc.py <folder audio in> <folder features output> <window_features> <hop_time> <freq_min> <freq_max>
 ```
 Times are in seconds and frequencies in Hz.
 

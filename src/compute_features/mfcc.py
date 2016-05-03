@@ -1,6 +1,7 @@
 import librosa
 import sys
 import numpy as np
+import os
 
 
 def get_mfcc_from_file(filename, windows, shift, energy=True, freq_min=1500, freq_max=8000, n_mfcc=13):
@@ -46,11 +47,11 @@ def get_mfcc(signal, fs, windows, shift, energy=True, freq_min=1500, freq_max=80
 if __name__ == '__main__':
     # TODO use argparse
     if len(sys.argv) != 5 and len(sys.argv) != 7:
-        print("usage: " + sys.argv[0] + " <audio filename> <filename output> <window_features> <hop_time>",
+        print("usage: " + sys.argv[0] + " <folder audio in> <folder output> <window_features> <hop_time>",
               file=sys.stderr)
         print("or")
         print("usage: " + sys.argv[
-            0] + " <audio filename> <filename output> <window_features> <hop_time> <freq_min> <freq_max>",
+            0] + " <folder audio in> <folder output> <window_features> <hop_time> <freq_min> <freq_max>",
               file=sys.stderr)
 
     if len(sys.argv) == 5:
@@ -60,7 +61,15 @@ if __name__ == '__main__':
         freq_min = float(sys.argv[5])
         freq_max = float(sys.argv[6])
 
-    signal, fs = librosa.load(sys.argv[1])
-    mfcc = get_mfcc(signal, fs, float(sys.argv[3]), float(sys.argv[4]), freq_min, freq_max)
-    # write into a csv file
-    np.savetxt(sys.argv[2], mfcc, delimiter=",")
+    folder = sys.argv[1]
+    files = os.listdir(sys.argv[1])
+
+    ##get features
+    print("Getting features")
+    features = []
+    for file in files:
+        print("Getting features from: " + file)
+        features_file = get_mfcc_from_file(folder + file, windows=float(sys.argv[3]), shift=float(sys.argv[4]),
+                                           freq_min=freq_min, freq_max=freq_max)
+        # write into a csv file
+        np.savetxt(sys.argv[2] + file + ".csv", features_file, delimiter=",")
