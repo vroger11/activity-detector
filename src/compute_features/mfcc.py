@@ -1,5 +1,4 @@
 import librosa
-import sys
 import numpy as np
 import os
 import argparse
@@ -48,17 +47,17 @@ def get_mfcc(signal, fs, windows, shift, energy=True, freq_min=1500, freq_max=80
 if __name__ == '__main__':
     # parse arguments
     parser = argparse.ArgumentParser(description='Process mfcc of some files in a folder')
-    parser.add_argument('folder_audio', metavar='<folder audio in>', type=str,
+    parser.add_argument('folder_audio', metavar='folder_audio_in', type=str,
                         help='folder containing the audio files')
-    parser.add_argument('folder_output', metavar='<folder output>', type=str,
+    parser.add_argument('folder_output', metavar='folder_output', type=str,
                         help='folder where the resulting files will be put')
-    parser.add_argument('windows', metavar='<window features>', type=float,
+    parser.add_argument('windows', metavar='window_features', type=float,
                         help='windows of the mfcc (in seconds)')
-    parser.add_argument('shift', metavar='<hop time>', type=float,
+    parser.add_argument('shift', metavar='hop_time', type=float,
                         help='hoptime (in seconds)')
-    parser.add_argument('freq_min', metavar='<frequency min>', type=int,
+    parser.add_argument('freq_min', metavar='frequency_min', type=int,
                         help='minimum frequency (in Hertz) looked at', nargs='?', default=1200)
-    parser.add_argument('freq_max', metavar='<frequency min>', type=int,
+    parser.add_argument('freq_max', metavar='frequency_max', type=int,
                         help='maximum frequency (in Hertz) looked at', nargs='?', default=8000)
 
     args = parser.parse_args()

@@ -1,5 +1,5 @@
 # Activity-Detector
-Toolbox that allow the user identify unsuppervised data on an audio signal.
+Toolbox that allow the user identify unsupervised data on an audio signal.
 Currently on development, only few tools are available.
 
 ##Installation
@@ -34,8 +34,8 @@ Will change in the future to be useful
 ### Compute mfcc features
 Compute features from a folder of audio files. The output is csv files.
 ```bash
-  python src/compute_features/mfcc.py <folder audio in> <folder output> <window features> <hop time>
-               [<frequency min>] [<frequency min>]
+  python src/compute_features/mfcc.py folder_audio_in folder_output window_features hop_time
+               [frequency_min] [frequency_max]
 ```
 
 Type ```python src/compute_features/mfcc.py -h ``` for details.
@@ -46,5 +46,6 @@ Will come in the future
 ### Plot activities (clusters) of data
 Learn a VDPMM and plot the clusters founds from it. In the future it will evolve. Usage:
  ```bash
- python src/main.py <folder audio in>
+ python src/main.py folder_audio_in
  ```
+Type ```python src/main.py -h ``` for details.

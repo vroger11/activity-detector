@@ -1,4 +1,3 @@
-import librosa
 import sys
 from sklearn import mixture
 
@@ -54,7 +53,3 @@ class Model:
         else:
             print("The model does not converged", file="stderr")
             sys.exit(2)
-
-
-if __name__ == "__main__":
-    signal, fs = librosa.load(sys.argv[1])
