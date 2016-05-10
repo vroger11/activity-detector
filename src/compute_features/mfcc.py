@@ -2,6 +2,7 @@ import librosa
 import sys
 import numpy as np
 import os
+import argparse
 
 
 def get_mfcc_from_file(filename, windows, shift, energy=True, freq_min=1500, freq_max=8000, n_mfcc=13):
@@ -45,31 +46,30 @@ def get_mfcc(signal, fs, windows, shift, energy=True, freq_min=1500, freq_max=80
 
 
 if __name__ == '__main__':
-    # TODO use argparse
-    if len(sys.argv) != 5 and len(sys.argv) != 7:
-        print("usage: " + sys.argv[0] + " <folder audio in> <folder output> <window_features> <hop_time>",
-              file=sys.stderr)
-        print("or")
-        print("usage: " + sys.argv[
-            0] + " <folder audio in> <folder output> <window_features> <hop_time> <freq_min> <freq_max>",
-              file=sys.stderr)
+    # parse arguments
+    parser = argparse.ArgumentParser(description='Process mfcc of some files in a folder')
+    parser.add_argument('folder_audio', metavar='<folder audio in>', type=str,
+                        help='folder containing the audio files')
+    parser.add_argument('folder_output', metavar='<folder output>', type=str,
+                        help='folder where the resulting files will be put')
+    parser.add_argument('windows', metavar='<window features>', type=float,
+                        help='windows of the mfcc (in seconds)')
+    parser.add_argument('shift', metavar='<hop time>', type=float,
+                        help='hoptime (in seconds)')
+    parser.add_argument('freq_min', metavar='<frequency min>', type=int,
+                        help='minimum frequency (in Hertz) looked at', nargs='?', default=1200)
+    parser.add_argument('freq_max', metavar='<frequency min>', type=int,
+                        help='maximum frequency (in Hertz) looked at', nargs='?', default=8000)
 
-    if len(sys.argv) == 5:
-        freq_min = 1200
-        freq_max = 8000
-    else:
-        freq_min = float(sys.argv[5])
-        freq_max = float(sys.argv[6])
-
-    folder = sys.argv[1]
-    files = os.listdir(sys.argv[1])
+    args = parser.parse_args()
+    files = os.listdir(args.folder_audio)
 
     ##get features
     print("Getting features")
     features = []
     for file in files:
         print("Getting features from: " + file)
-        features_file = get_mfcc_from_file(folder + file, windows=float(sys.argv[3]), shift=float(sys.argv[4]),
-                                           freq_min=freq_min, freq_max=freq_max)
+        features_file = get_mfcc_from_file(args.folder_audio + file, windows=args.windows, shift=args.shift,
+                                           freq_min=args.freq_min, freq_max=args.freq_max)
         # write into a csv file
-        np.savetxt(sys.argv[2] + file + ".csv", features_file, delimiter=",")
+        np.savetxt(args.folder_output + file + ".csv", features_file, delimiter=",")

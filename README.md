@@ -2,10 +2,10 @@
 Toolbox that allow the user identify unsuppervised data on an audio signal.
 Currently on development, only few tools are available.
 
-##Intallation
+##Installation
 
 ### With anaconda (recommended)
-First install anaconda, exemple use [miniconda](http://conda.pydata.org/miniconda.html) (ligth version of anaconda).
+First install anaconda, example use [miniconda](http://conda.pydata.org/miniconda.html) (ligth version of anaconda).
 
 Next, create the environment with the .yml file of this project.
 ```bash
@@ -24,7 +24,7 @@ Don't forget to activate it using this project.
 
 ## Usage
 
-### Plot signal waveform and spectogram of a file
+### Plot signal waveform and spectrogram of a file
 
 Will change in the future to be useful
 ```bash
@@ -34,9 +34,11 @@ Will change in the future to be useful
 ### Compute mfcc features
 Compute features from a folder of audio files. The output is csv files.
 ```bash
-  python src/compute_features/mfcc.py <folder audio in> <folder features output> <window_features> <hop_time> <freq_min> <freq_max>
+  python src/compute_features/mfcc.py <folder audio in> <folder output> <window features> <hop time>
+               [<frequency min>] [<frequency min>]
 ```
-Times are in seconds and frequencies in Hz.
+
+Type ```python src/compute_features/mfcc.py -h ``` for details.
 
 ### Get clusters
 Will come in the future
