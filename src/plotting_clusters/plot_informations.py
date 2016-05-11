@@ -97,7 +97,7 @@ def vector_of_cluster_to_matrix(vec, number_max=None):
     return clusters
 
 
-if __name__ == '__main__': #TODO replace it by a test
+if __name__ == '__main__':  # TODO replace it by a test
     signal, fs = librosa.load(sys.argv[1])
     vec = np.zeros(shape=(len(signal)))
 

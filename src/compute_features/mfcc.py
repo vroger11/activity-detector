@@ -2,6 +2,8 @@ import librosa
 import numpy as np
 import os
 import argparse
+import logging.config
+import ast
 
 
 def get_mfcc_from_file(filename, windows, shift, energy=True, freq_min=1500, freq_max=8000, n_mfcc=13):
@@ -45,7 +47,7 @@ def get_mfcc(signal, fs, windows, shift, energy=True, freq_min=1500, freq_max=80
 
 
 if __name__ == '__main__':
-    # parse arguments
+    # prepare parser of arguments
     parser = argparse.ArgumentParser(description='Process mfcc of some files in a folder')
     parser.add_argument('folder_audio', metavar='folder_audio_in', type=str,
                         help='folder containing the audio files')
@@ -59,15 +61,33 @@ if __name__ == '__main__':
                         help='minimum frequency (in Hertz) looked at', nargs='?', default=1200)
     parser.add_argument('freq_max', metavar='frequency_max', type=int,
                         help='maximum frequency (in Hertz) looked at', nargs='?', default=8000)
+    parser.add_argument('-v', '--verbose', action='store_true', help='Show every log')
+    parser.add_argument('-l', '--logFile', type=str, help='File where the logs will be saved', default=None)
 
+    # parse arguments
     args = parser.parse_args()
+
+    # configure logging
+    with open('config/logging.json') as f:
+        config = ast.literal_eval(f.read())
+        logging.config.dictConfig(config)
+
+    logger = logging.getLogger('activityDetectorDefault')
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
+
+    if args.logFile:
+        # TODO correct: the logs in the file should be the same as activityDetectorDefault
+        logger.addHandler(logging.handlers.RotatingFileHandler(args.logFile))
+
+    # program begins
     files = os.listdir(args.folder_audio)
 
     ##get features
-    print("Getting features")
+    logger.info("Getting features")
     features = []
     for file in files:
-        print("Getting features from: " + file)
+        logger.info("Getting features from: " + file)
         features_file = get_mfcc_from_file(args.folder_audio + file, windows=args.windows, shift=args.shift,
                                            freq_min=args.freq_min, freq_max=args.freq_max)
         # write into a csv file

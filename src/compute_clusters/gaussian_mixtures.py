@@ -1,5 +1,13 @@
 import sys
 from sklearn import mixture
+import logging.config
+import ast
+
+with open('config/logging.json') as f:
+    config = ast.literal_eval(f.read())
+    logging.config.dictConfig(config)
+
+logger = logging.getLogger('activityDetectorDefault')
 
 
 class Model:
@@ -38,7 +46,7 @@ class Model:
         if self.dpgmm_model.converged_:
             return self.dpgmm_model.predict(data_in)
         else:
-            print("The model does not converged", file="stderr")
+            logger.warning("The model does not converged", file="stderr")
             sys.exit(1)
 
     def generate_data_from_model(self, number_of_data=1000):
@@ -51,5 +59,5 @@ class Model:
         if self.dpgmm_model.converged_:
             return self.dpgmm_model.sample(number_of_data)
         else:
-            print("The model does not converged", file="stderr")
+            logger.warning("The model does not converged", file="stderr")
             sys.exit(2)
