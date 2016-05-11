@@ -34,7 +34,8 @@ Will change in the future to be useful
 ### Compute mfcc features
 Compute features from a folder of audio files. The output is csv files.
 ```bash
-  python src/compute_features/mfcc.py folder_audio_in folder_output window_features hop_time
+  python src/compute_features/mfcc.py [-v] [-l LOGFILE]
+               folder_audio_in folder_output window_features hop_time
                [frequency_min] [frequency_max]
 ```
 
@@ -46,6 +47,6 @@ Will come in the future
 ### Plot activities (clusters) of data
 Learn a VDPMM and plot the clusters founds from it. In the future it will evolve. Usage:
  ```bash
- python src/main.py folder_audio_in
+ python src/main.py [-v] [-l LOGFILE] folder_audio_in
  ```
 Type ```python src/main.py -h ``` for details.
