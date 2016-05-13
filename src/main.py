@@ -42,8 +42,14 @@ def main():
     features = []
     for file in files:
         logger.info("Getting features from: " + file)
-        features_file = mfcc.get_mfcc_from_file(args.folder_audio + '/' + file, windows=0.06, shift=0.03, freq_min=1500,
+        path_to_file = os.path.normpath(args.folder_audio + "/" + file)
+        try:
+            features_file = mfcc.get_mfcc_from_file(path_to_file, windows=0.06, shift=0.03, freq_min=1500,
                                                 freq_max=8000)
+        except:
+            logger.warning("There is a problem while reading: " + path_to_file)
+            continue
+
         features = np.hstack((features, features_file)) if features != [] else features_file
 
     # normalisation TODO see if it is useful
@@ -65,7 +71,13 @@ def main():
     signal = []
     fs = 0
     for file in files:
-        signal_file, fs = librosa.load(args.folder_audio + '/' + file)
+        path_to_file = os.path.normpath(args.folder_audio + "/" + file)
+        try:
+            signal_file, fs = librosa.load(path_to_file)
+        except:
+            logger.warning("There is a problem while reading: " + path_to_file)
+            continue
+
         signal = np.hstack((signal, signal_file)) if signal != [] else signal_file
 
     m_clusters = plt_clusters.vector_of_cluster_to_matrix(clusters)  # , number_max=model.dpgmm_model.n_components)

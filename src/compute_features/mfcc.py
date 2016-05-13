@@ -1,9 +1,5 @@
 import librosa
 import numpy as np
-import os
-import argparse
-import logging.config
-import ast
 
 
 def get_mfcc_from_file(filename, windows, shift, energy=True, freq_min=1500, freq_max=8000, n_mfcc=13):
@@ -14,7 +10,11 @@ def get_mfcc_from_file(filename, windows, shift, energy=True, freq_min=1500, fre
     :return: the mfcc corresponding to all parameters
     '''
 
-    signal, fs = librosa.load(filename)
+    try:
+        signal, fs = librosa.load(filename)
+    except:
+        raise
+
     return get_mfcc(signal, fs, windows, shift, energy=energy, freq_min=freq_min, freq_max=freq_max, n_mfcc=n_mfcc)
 
 
@@ -47,6 +47,11 @@ def get_mfcc(signal, fs, windows, shift, energy=True, freq_min=1500, freq_max=80
 
 
 if __name__ == '__main__':
+    import os
+    import argparse
+    import logging.config
+    import ast
+
     # prepare parser of arguments
     parser = argparse.ArgumentParser(description='Process mfcc of some files in a folder')
     parser.add_argument('folder_audio', metavar='folder_audio_in', type=str,
@@ -88,7 +93,13 @@ if __name__ == '__main__':
     features = []
     for file in files:
         logger.info("Getting features from: " + file)
-        features_file = get_mfcc_from_file(args.folder_audio + file, windows=args.windows, shift=args.shift,
-                                           freq_min=args.freq_min, freq_max=args.freq_max)
+        path_to_file = os.path.normpath(args.folder_audio + "/" + file)
+        try:
+            features_file = get_mfcc_from_file(path_to_file, windows=args.windows, shift=args.shift,
+                                               freq_min=args.freq_min, freq_max=args.freq_max)
+        except:
+            logger.warning("There is a problem while reading: " + path_to_file)
+            continue
+
         # write into a csv file
         np.savetxt(args.folder_output + file + ".csv", features_file, delimiter=",")
