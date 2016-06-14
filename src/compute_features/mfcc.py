@@ -15,7 +15,7 @@ def get_mfcc_from_file(filename, windows, shift, energy=True, freq_min=1500, fre
     '''
 
     try:
-        signal, fs = librosa.load(filename)
+        signal, fs = librosa.load(filename, sr=None)
     except:
         raise
 
@@ -43,7 +43,7 @@ def get_mfcc(signal, fs, windows, shift, energy=True, freq_min=1500, freq_max=80
         energy_vec = librosa.feature.rmse(y=signal, n_fft=n_fft, hop_length=hop_length)
 
     mfcc = librosa.feature.mfcc(y=signal, sr=fs, n_mfcc=n_mfcc, fmax=freq_max, fmin=freq_min, n_fft=n_fft,
-                                hop_length=hop_length, htk=True)
+                                hop_length=hop_length, htk=True, n_mels=256)
     if energy:
         return np.vstack((energy_vec, mfcc))
     else:

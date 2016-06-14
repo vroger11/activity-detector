@@ -12,7 +12,7 @@ def show_audio(filename):
     """
 
     # read the audio file
-    signal, sample_rate = librosa.load(filename)
+    signal, _ = librosa.load(filename, sr=None)
 
     _, axarr = plt.subplots(2, sharex=True)
     # plot the waveform
@@ -102,7 +102,7 @@ def vector_of_cluster_to_matrix(vector, number_max=None):
 
 # TODO replace it by a test
 if __name__ == '__main__':
-    signal, sample_rate = librosa.load(sys.argv[1])
+    signal, sample_rate = librosa.load(sys.argv[1], sr=None)
     vector = np.zeros(shape=(len(signal)))
 
     # to test the function, create fake clusters
