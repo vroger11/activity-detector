@@ -1,5 +1,9 @@
+import os
+import argparse
+import logging.config
 import librosa
 import numpy as np
+import ast
 
 
 def get_mfcc_from_file(filename, windows, shift, energy=True, freq_min=1500, freq_max=8000, n_mfcc=13):
@@ -47,11 +51,6 @@ def get_mfcc(signal, fs, windows, shift, energy=True, freq_min=1500, freq_max=80
 
 
 if __name__ == '__main__':
-    import os
-    import argparse
-    import logging.config
-    import ast
-
     # prepare parser of arguments
     parser = argparse.ArgumentParser(description='Process mfcc of some files in a folder')
     parser.add_argument('folder_audio', metavar='folder_audio_in', type=str,

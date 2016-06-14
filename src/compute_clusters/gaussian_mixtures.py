@@ -1,6 +1,6 @@
 import sys
-from sklearn import mixture
 import logging.config
+from sklearn import mixture
 import ast
 
 with open('config/logging.json') as f:
