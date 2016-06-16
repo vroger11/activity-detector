@@ -48,7 +48,7 @@ Will come in the future
 Learn a VDPMM and plot the clusters founds from it, save the figures in folder_out. Usage:
  ```bash
  python src/main.py [-h] [-ml MAX_LEARN] [-v] [-l LOGFILE]
-               folder_audio_in folder_out max_frequency
+               folder_audio_in folder_out min_frequency max_frequency
  ```
 Type ```python src/main.py -h ``` for details.
 

@@ -16,6 +16,8 @@ def main():
                         help='folder containing the audio files')
     parser.add_argument('folder_out', metavar='folder_out', type=str,
                         help='folder containing the results')
+    parser.add_argument('freq_min', metavar='min_frequency', type=int,
+                        help='minimum frequency')
     parser.add_argument('freq_max', metavar='max_frequency', type=int,
                         help='maximum frequency')
     parser.add_argument('-ml', '--max_learn', type=int,
@@ -56,7 +58,7 @@ def main():
             features_file = mfcc.get_mfcc_from_file(path_to_file,
                                                     windows=0.06,
                                                     shift=0.03,
-                                                    freq_min=500,
+                                                    freq_min=args.freq_min,
                                                     freq_max=args.freq_max,
                                                     n_mfcc=26,
                                                     energy=True)
@@ -101,7 +103,7 @@ def main():
             features_file = mfcc.get_mfcc_from_file(path_to_file,
                                                     windows=0.06,
                                                     shift=0.03,
-                                                    freq_min=500,
+                                                    freq_min=args.freq_min,
                                                     freq_max=args.freq_max,
                                                     n_mfcc=26,
                                                     energy=True)
