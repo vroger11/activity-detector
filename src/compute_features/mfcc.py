@@ -15,19 +15,30 @@ def get_mfcc_from_file(filename, windows, shift, energy=True, freq_min=1500, fre
     '''
 
     try:
-        signal, fs = librosa.load(filename, sr=None)
+        signal, sample_rate = librosa.load(filename, sr=None)
     except:
         raise
 
-    return get_mfcc(signal, fs, windows, shift, energy=energy, freq_min=freq_min, freq_max=freq_max, n_mfcc=n_mfcc)
+    return get_mfcc(signal, sample_rate,
+                    windows, shift,
+                    energy=energy,
+                    freq_min=freq_min, freq_max=freq_max,
+                    n_mfcc=n_mfcc)
 
 
-def get_mfcc(signal, fs, windows, shift, energy=True, freq_min=1500, freq_max=8000, n_mfcc=13):
+def get_mfcc(signal,
+             sample_rate,
+             windows,
+             shift,
+             energy=True,
+             freq_min=1500,
+             freq_max=8000,
+             n_mfcc=13):
     '''
     compute the mfcc features corresponding to the parameters
 
     :param signal: one channel signal
-    :param fs: sampling frequency (in Hz)
+    :param sample_rate: sampling frequency (in Hz)
     :param windows: > 0 (in seconds)
     :param shift: > 0 (in seconds)
     :param freq_min: lowest frequency (in Hz)
@@ -35,14 +46,15 @@ def get_mfcc(signal, fs, windows, shift, energy=True, freq_min=1500, freq_max=80
     :return: the mfcc corresponding to all parameters
     '''
 
-    n_fft = round(windows * fs)
-    hop_length = round(shift * fs)
+    n_fft = round(windows * sample_rate)
+    hop_length = round(shift * sample_rate)
 
     if energy:
         n_mfcc -= 1
         energy_vec = librosa.feature.rmse(y=signal, n_fft=n_fft, hop_length=hop_length)
 
-    mfcc = librosa.feature.mfcc(y=signal, sr=fs, n_mfcc=n_mfcc, fmax=freq_max, fmin=freq_min, n_fft=n_fft,
+    mfcc = librosa.feature.mfcc(y=signal, sr=sample_rate, n_mfcc=n_mfcc,
+                                fmax=freq_max, fmin=freq_min, n_fft=n_fft,
                                 hop_length=hop_length, htk=True, n_mels=256)
     if energy:
         return np.vstack((energy_vec, mfcc))
