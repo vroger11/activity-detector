@@ -2,7 +2,7 @@
 Toolbox that allow the user identify unsupervised data on an audio signal.
 Currently on development, only few tools are available.
 
-##Installation
+## Installation
 
 ### With anaconda (recommended)
 First install anaconda, example use [miniconda](http://conda.pydata.org/miniconda.html) (ligth version of anaconda).
@@ -45,8 +45,11 @@ Type ```python src/compute_features/mfcc.py -h ``` for details.
 Will come in the future
 
 ### Plot activities (clusters) of data
-Learn a VDPMM and plot the clusters founds from it. In the future it will evolve. Usage:
+Learn a VDPMM and plot the clusters founds from it, save the figures in folder_out. Usage:
  ```bash
- python src/main.py [-v] [-l LOGFILE] folder_audio_in
+ python src/main.py [-h] [-ml MAX_LEARN] [-v] [-l LOGFILE]
+               folder_audio_in folder_out max_frequency
  ```
 Type ```python src/main.py -h ``` for details.
+
+In the future it will evolve.
