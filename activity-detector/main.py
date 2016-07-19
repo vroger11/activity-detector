@@ -7,7 +7,7 @@ import librosa
 from scipy.stats import mstats
 from compute_clusters import gaussian_mixtures
 from compute_features import mfcc
-import plotting_clusters.plot_informations as plt_clusters
+import plotting.plot_clusters as plt_clusters
 
 def learn_model(files, freq_min, freq_max, max_learn):
     # get features
