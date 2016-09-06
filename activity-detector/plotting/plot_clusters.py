@@ -2,13 +2,24 @@ import numpy as np
 import librosa
 import matplotlib.pyplot as plt
 
+def compute_spectrogram(signal, sample_rate):
+    '''
+    compute spectrogram from signal
+    :param signal:
+    :return: matrice representing the spectrum, frequencies corresponding and times
+    '''
+    [spectrum, freqs, times] = plt.mlab.specgram(signal, NFFT=1024, Fs=sample_rate,
+                                                 noverlap=512, window=np.hamming(1024))
+    spectrum = 10. * np.log10(spectrum)
+
+    return [spectrum, freqs, times]
 
 def show_audio(filename):
-    """
+    '''
     show the waveform and the spectogram on the signal from filename
     :param filename: path to the file containing an audio signal
     :return: None
-    """
+    '''
 
     # read the audio file
     # plot the waveform
@@ -21,11 +32,17 @@ def show_audio(filename):
     axarr[0].set_ylabel("Amplitude")
 
     # plot the spectgram
-    axarr[1].specgram(signal, NFFT=1024, Fs=sample_rate,
-                      noverlap=512, window=np.hamming(1024))
+    [spectrum, freqs, times] = compute_spectrogram(signal, sample_rate)
+
+    axarr[1].matshow(spectrum,
+                     origin='lower',
+                     extent=(times[0], times[-1], freqs[0], freqs[-1]),
+                     aspect='auto')
+    axarr[1].set_label_position('bottom')
     axarr[1].set_title('Spectrogram')
     axarr[1].set_ylabel("Frequency in Hz")
     axarr[1].set_xlabel("Time in seconds")
+
     plt.show()
 
 def show_audio_with_cluster(signal, sample_rate, cluster, show_signal=True, show_spectrogram=True):
@@ -47,7 +64,8 @@ def show_audio_with_cluster(signal, sample_rate, cluster, show_signal=True, show
     figure.show()
     plt.show()
 
-def save_audio_with_cluster(filename_out, signal, sample_rate, cluster, show_signal=True, show_spectrogram=True):
+def save_audio_with_cluster(filename_out, signal, sample_rate, cluster,
+                            show_signal=True, show_spectrogram=True):
     '''
     compute the figure to show/save
 
@@ -83,20 +101,21 @@ def _compute_figure(signal, sample_rate, cluster, show_signal=True, show_spectro
 
     if show_spectrogram:
         # plot the spectgram
-        axarr[id_subplot].specgram(signal,
-                                   NFFT=1024,
-                                   Fs=sample_rate,
-                                   noverlap=512,
-                                   window=np.hamming(1024))
+        [spectrum, freqs, times] = compute_spectrogram(signal, sample_rate)
+        axarr[id_subplot].matshow(spectrum,
+                                  origin='lower',
+                                  extent=(times[0], times[-1], freqs[0], freqs[-1]),
+                                  aspect='auto')
+
         axarr[id_subplot].set_title('Spectrogram')
         axarr[id_subplot].set_ylabel("Frequency in Hz")
         id_subplot += 1
 
     # plot cluster
-    m = np.matrix(cluster)
-    dim_x, _ = m.shape
+    cluster = np.matrix(cluster)
+    dim_x, _ = cluster.shape
     cmap = plt.get_cmap("nipy_spectral")
-    axarr[id_subplot].matshow(m,
+    axarr[id_subplot].matshow(cluster,
                               aspect='auto',
                               origin='lower',
                               extent=[0, len(signal) / sample_rate, 0, dim_x],

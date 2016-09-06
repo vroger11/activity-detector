@@ -5,18 +5,20 @@ import ast
 import numpy as np
 import librosa
 from scipy.stats import mstats
+from sklearn import metrics
 from compute_clusters import gaussian_mixtures
 from compute_features import mfcc
 import plotting.plot_clusters as plt_clusters
+from plotting import plot_internal_indices
 
-def learn_model(files, freq_min, freq_max, max_learn):
+def learn_model(folder_audio, files, freq_min, freq_max, max_learn):
     # get features
     LOGGER.info("Getting features")
     features = []
     file_taken = 0
     for file in files:
         LOGGER.info("Getting features from: " + file)
-        path_to_file = os.path.normpath(args.folder_audio + "/" + file)
+        path_to_file = os.path.normpath(folder_audio + "/" + file)
         try:
             features_file = mfcc.get_mfcc_from_file(path_to_file,
                                                     windows=0.06,
@@ -45,20 +47,38 @@ def learn_model(files, freq_min, freq_max, max_learn):
                                     alpha=.5,
                                     verbose=0,
                                     covariance_type="diag")
-    model.learn_model(features)
+    predicted, values_possible = model.learn_model(features)
     LOGGER.info("Done. Converged: " + str(model.dpgmm_model.converged_))
-    # get number of states
-    clusters = model.predic_clusters(features)
-    values_possible = np.unique(clusters)
 
-    return [model, clusters, values_possible]
+# TODO find better indices performances
+    # evaluate silhouette indices
+#    silhouette_sample_score = metrics.silhouette_samples(features, predicted, metric='euclidean')
+#    silhouette_mean_clusters = np.zeros((1, len(values_possible)))
+#    predicted = np.array(predicted)
+#    k = 0
+#    for i in values_possible:
+#        index = np.where(predicted == i)
+#        silhouette_mean_clusters[k] = np.mean(silhouette_sample_score[index])
+#        k += 1
+#
+#    return [model, values_possible, silhouette_mean_clusters]
+    return [model, values_possible]
 
 def main(args):
     files = os.listdir(args.folder_audio)
-    model, clusters, values_possible = learn_model(files,
-                                                   args.freq_min,
-                                                   args.freq_max,
-                                                   args.max_learn)
+#    model, values_possible, silhouette_score = learn_model(args.folder_audio,
+#                                                           files,
+#                                                           args.freq_min,
+#                                                           args.freq_max,
+#                                                           args.max_learn)
+    model, values_possible = learn_model(args.folder_audio,
+                                         files,
+                                         args.freq_min,
+                                         args.freq_max,
+                                         args.max_learn)
+
+
+#    plot_internal_indices.plot_silhouette(silhouette_score)
     if not os.path.exists(args.folder_out):
         os.makedirs(args.folder_out)
 
@@ -119,7 +139,7 @@ if __name__ == '__main__':
                         help='File where the logs will be saved', default=None)
 
     # parse arguments
-    args = PARSER.parse_args()
+    ARGS = PARSER.parse_args()
 
     # configure logging
     with open('config/logging.json') as config_description:
@@ -127,11 +147,11 @@ if __name__ == '__main__':
         logging.config.dictConfig(config)
 
     LOGGER = logging.getLogger('activityDetectorDefault')
-    if args.verbose:
+    if ARGS.verbose:
         LOGGER.setLevel(logging.DEBUG)
 
-    if args.logFile:
+    if ARGS.logFile:
         # TODO correct: the logs in the file should be the same as activityDetectorDefault
-        LOGGER.addHandler(logging.handlers.RotatingFileHandler(args.logFile))
+        LOGGER.addHandler(logging.handlers.RotatingFileHandler(ARGS.logFile))
 
-    main(args)
+    main(ARGS)

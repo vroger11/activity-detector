@@ -1,7 +1,8 @@
 import sys
 import logging.config
-from sklearn import mixture
 import ast
+from sklearn import mixture
+import numpy as np
 
 with open('config/logging.json') as f:
     config = ast.literal_eval(f.read())
@@ -17,9 +18,9 @@ class Model:
         :param max_cluster:
         :param covariance_type:
         '''
-        self.dpgmm_model = mixture.DPGMM(n_components=n_components, covariance_type=covariance_type, alpha=alpha,
-                                         random_state=None, thresh=None, tol=0.001, verbose=verbose, min_covar=None,
-                                         n_iter=n_iter,
+        self.dpgmm_model = mixture.DPGMM(n_components=n_components, covariance_type=covariance_type,
+                                         alpha=alpha, random_state=None, thresh=None, tol=0.001,
+                                         verbose=verbose, min_covar=None, n_iter=n_iter,
                                          params='wmc', init_params='wmc')
         self.number_of_cluster_found = -1  # because the model was not learned
 
@@ -33,7 +34,9 @@ class Model:
         :return:
         '''
 
-        self.dpgmm_model.fit(data_in)
+        predicted = self.dpgmm_model.fit_predict(data_in)
+        values_possible = np.unique(predicted)
+        return [predicted, values_possible]
 
     def predic_clusters(self, data_in):
         '''
