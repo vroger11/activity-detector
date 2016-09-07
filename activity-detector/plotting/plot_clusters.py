@@ -1,6 +1,8 @@
 import numpy as np
 import librosa
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
+
 
 def compute_spectrogram(signal, sample_rate):
     '''
@@ -123,7 +125,14 @@ def _compute_figure(signal, sample_rate, cluster, show_signal=True, show_spectro
     axarr[id_subplot].set_ylabel("Cluster")
     axarr[id_subplot].set_xlabel("Time in seconds")
     axarr[id_subplot].xaxis.set_ticks_position('bottom')
-    # TODO find how to add grid
+
+    # add grid
+    minorLocator = MultipleLocator(1)
+    axarr[id_subplot].yaxis.set_minor_locator(minorLocator)
+
+    axarr[id_subplot].xaxis.grid(which='major', color='Black', linestyle='-', linewidth=0.5)
+    axarr[id_subplot].yaxis.grid(which='major', color='Black', linestyle='-', linewidth=0.5)
+    axarr[id_subplot].yaxis.grid(which='minor', color='Black', linestyle='--', linewidth=0.25)
 
     return figure
 
