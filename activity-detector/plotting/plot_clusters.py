@@ -91,7 +91,7 @@ def _compute_figure(signal, sample_rate, cluster, show_signal=True, show_spectro
 
     total_subplots = 1 + show_signal + show_spectrogram
     figure, axarr = plt.subplots(total_subplots, sharex=True)
-    plt.tight_layout()
+    plt.tight_layout(pad=0.51)
 
     id_subplot = 0
     if show_signal:
@@ -100,6 +100,7 @@ def _compute_figure(signal, sample_rate, cluster, show_signal=True, show_spectro
         axarr[id_subplot].plot(time, signal)
         axarr[id_subplot].set_title('Waveform')
         axarr[id_subplot].set_ylabel("Amplitude")
+        axarr[id_subplot].set_xticklabels([])
         id_subplot += 1
 
     if show_spectrogram:
@@ -112,6 +113,7 @@ def _compute_figure(signal, sample_rate, cluster, show_signal=True, show_spectro
 
         axarr[id_subplot].set_title('Spectrogram')
         axarr[id_subplot].set_ylabel("Frequency in Hz")
+        axarr[id_subplot].set_xticklabels([])
         id_subplot += 1
 
     # plot cluster
