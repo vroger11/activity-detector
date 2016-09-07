@@ -91,6 +91,7 @@ def _compute_figure(signal, sample_rate, cluster, show_signal=True, show_spectro
 
     total_subplots = 1 + show_signal + show_spectrogram
     figure, axarr = plt.subplots(total_subplots, sharex=True)
+    plt.tight_layout()
 
     id_subplot = 0
     if show_signal:
