@@ -5,61 +5,62 @@ import librosa
 import numpy as np
 import ast
 
+class FeatureMfcc:
 
-def get_mfcc_from_file(filename, windows, shift, energy=True, freq_min=1500, freq_max=8000, n_mfcc=13):
-    '''
-    cf get_mfcc for others parameters
+    def __init__(self, windows, shift, energy=True, freq_min=1500, freq_max=8000, n_mfcc=13):
+        """
+        :param windows: > 0 (in seconds)
+        :param shift: > 0 (in seconds)
+        :param freq_min: lowest frequency (in Hz)
+        :param freq_max: highest frequency (in Hz)
+        """
 
-    :param filename: the path of the audio file
-    :return: the mfcc corresponding to all parameters
-    '''
+        self.windows = windows
+        self.shift = shift
+        self.energy = energy
+        self.freq_min = freq_min
+        self.freq_max = freq_max
+        self.n_mfcc = n_mfcc
 
-    try:
-        signal, sample_rate = librosa.load(filename, sr=None)
-    except:
-        raise
+        if energy:
+            self.n_mfcc -= 1
 
-    return get_mfcc(signal, sample_rate,
-                    windows, shift,
-                    energy=energy,
-                    freq_min=freq_min, freq_max=freq_max,
-                    n_mfcc=n_mfcc)
+    def get_mfcc_from_file(self, filename):
+        '''
+        cf get_mfcc for others parameters
+
+        :param filename: the path of the audio file
+        :return: the mfcc corresponding to all parameters
+        '''
+
+        try:
+            signal, sample_rate = librosa.load(filename, sr=None)
+        except:
+            raise
+
+        return self.get_mfcc(signal, sample_rate)
 
 
-def get_mfcc(signal,
-             sample_rate,
-             windows,
-             shift,
-             energy=True,
-             freq_min=1500,
-             freq_max=8000,
-             n_mfcc=13):
-    '''
-    compute the mfcc features corresponding to the parameters
+    def get_mfcc(self, signal, sample_rate):
+        '''
+        compute the mfcc features corresponding to the parameters
 
-    :param signal: one channel signal
-    :param sample_rate: sampling frequency (in Hz)
-    :param windows: > 0 (in seconds)
-    :param shift: > 0 (in seconds)
-    :param freq_min: lowest frequency (in Hz)
-    :param freq_max: highest frequency (in Hz)
-    :return: the mfcc corresponding to all parameters
-    '''
+        :param signal: one channel signal
+        :param sample_rate: sampling frequency (in Hz)
+        :return: the mfcc corresponding to all parameters
+        '''
 
-    n_fft = round(windows * sample_rate)
-    hop_length = round(shift * sample_rate)
+        n_fft = round(self.windows * sample_rate)
+        hop_length = round(self.shift * sample_rate)
 
-    if energy:
-        n_mfcc -= 1
-        energy_vec = librosa.feature.rmse(y=signal, n_fft=n_fft, hop_length=hop_length)
-
-    mfcc = librosa.feature.mfcc(y=signal, sr=sample_rate, n_mfcc=n_mfcc,
-                                fmax=freq_max, fmin=freq_min, n_fft=n_fft,
-                                hop_length=hop_length, htk=True, n_mels=256)
-    if energy:
-        return np.vstack((energy_vec, mfcc))
-    else:
-        return mfcc
+        mfcc = librosa.feature.mfcc(y=signal, sr=sample_rate, n_mfcc=self.n_mfcc,
+                                    fmax=self.freq_max, fmin=self.freq_min, n_fft=n_fft,
+                                    hop_length=hop_length, htk=True, n_mels=256)
+        if self.energy:
+            energy_vec = librosa.feature.rmse(y=signal, n_fft=n_fft, hop_length=hop_length)
+            return np.vstack((energy_vec, mfcc))
+        else:
+            return mfcc
 
 
 if __name__ == '__main__':
@@ -100,14 +101,15 @@ if __name__ == '__main__':
     files = os.listdir(args.folder_audio)
 
     ##get features
+    compute_features = FeatureMfcc(windows=args.windows, shift=args.shift,
+                                   freq_min=args.freq_min, freq_max=args.freq_max)
     logger.info("Getting features")
     features = []
     for file in files:
         logger.info("Getting features from: " + file)
         path_to_file = os.path.normpath(args.folder_audio + "/" + file)
         try:
-            features_file = get_mfcc_from_file(path_to_file, windows=args.windows, shift=args.shift,
-                                               freq_min=args.freq_min, freq_max=args.freq_max)
+            features_file = compute_features.get_mfcc_from_file(path_to_file)
         except:
             logger.warning("There is a problem while reading: " + path_to_file)
             continue

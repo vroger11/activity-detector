@@ -2,25 +2,25 @@ import os
 import argparse
 import logging.config
 import ast
+import pickle
 import numpy as np
 import librosa
 from scipy.stats import mstats
 from sklearn import metrics
 from compute_clusters import gaussian_mixtures
-from compute_features import mfcc
+from compute_features.mfcc import FeatureMfcc
 import plotting.plot_clusters as plt_clusters
 from plotting import plot_internal_indices
-import pickle
 
 def save_obj(obj, filename):
-    with open(filename + '.pkl', 'wb') as f:
-        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+    with open(filename + '.pkl', 'wb') as file:
+        pickle.dump(obj, file, pickle.HIGHEST_PROTOCOL)
 
 def load_obj(filename):
-    with open(filename + '.pkl', 'rb') as f:
-        return pickle.load(f)
+    with open(filename + '.pkl', 'rb') as file:
+        return pickle.load(file)
 
-def learn_model(folder_audio, freq_min, freq_max, max_learn):
+def learn_model(folder_audio, feature_extractor, max_learn):
     # get features
     LOGGER.info("Getting features")
     features = []
@@ -36,13 +36,7 @@ def learn_model(folder_audio, freq_min, freq_max, max_learn):
             path_to_file = os.path.join(root, file)
 
             try:
-                features_file = mfcc.get_mfcc_from_file(path_to_file,
-                                                        windows=0.06,
-                                                        shift=0.03,
-                                                        freq_min=freq_min,
-                                                        freq_max=freq_max,
-                                                        n_mfcc=26,
-                                                        energy=True)
+                features_file = feature_extractor.get_mfcc_from_file(path_to_file)
             except:
                 LOGGER.warning("There is a problem while computing mfcc on: " + path_to_file)
                 continue
@@ -78,7 +72,7 @@ def learn_model(folder_audio, freq_min, freq_max, max_learn):
 #    return [model, values_possible, silhouette_mean_clusters]
     return [model, values_possible]
 
-def forward_model(folder_out, folder_audio, model, values_possible, freq_min, freq_max):
+def forward_model(folder_out, folder_audio, model, values_possible, feature_extractor):
     signal = []
     sample_rate = 0
     for root, dirs, files in os.walk(folder_audio):
@@ -87,13 +81,7 @@ def forward_model(folder_out, folder_audio, model, values_possible, freq_min, fr
             path_to_file = os.path.join(root, file)
             try:
                 signal, sample_rate = librosa.load(path_to_file, sr=None)
-                features_file = mfcc.get_mfcc_from_file(path_to_file,
-                                                        windows=0.06,
-                                                        shift=0.03,
-                                                        freq_min=freq_min,
-                                                        freq_max=freq_max,
-                                                        n_mfcc=26,
-                                                        energy=True)
+                features_file = feature_extractor.get_mfcc(signal, sample_rate)
             except Exception as e:
                 LOGGER.warning("There is a problem with: " + path_to_file)
                 LOGGER.warning(e)
@@ -124,9 +112,15 @@ def main(args):
 #                                                           args.freq_min,
 #                                                           args.freq_max,
 #                                                           args.max_learn)
+
+    feature_extractor = FeatureMfcc(windows=0.06, shift=0.03,
+                                    freq_min=args.freq_min,
+                                    freq_max=args.freq_max,
+                                    n_mfcc=26,
+                                    energy=True)
+
     model, values_possible = learn_model(args.folder_audio,
-                                         args.freq_min,
-                                         args.freq_max,
+                                         feature_extractor,
                                          args.max_learn)
 
     save_obj(model, os.path.join(args.folder_out, 'model'))
@@ -135,13 +129,11 @@ def main(args):
 
     # plot result
     LOGGER.info("Saving results")
-    # TODO be more elgant with how to deal with features parameters
     forward_model(args.folder_out,
                   args.folder_audio,
                   model,
                   values_possible,
-                  args.freq_min,
-                  args.freq_max)
+                  feature_extractor)
 
 
 if __name__ == '__main__':
