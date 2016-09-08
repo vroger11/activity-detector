@@ -10,6 +10,15 @@ from compute_clusters import gaussian_mixtures
 from compute_features import mfcc
 import plotting.plot_clusters as plt_clusters
 from plotting import plot_internal_indices
+import pickle
+
+def save_obj(obj, filename):
+    with open(filename + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+def load_obj(filename):
+    with open(filename + '.pkl', 'rb') as f:
+        return pickle.load(f)
 
 def learn_model(folder_audio, freq_min, freq_max, max_learn):
     # get features
@@ -69,28 +78,11 @@ def learn_model(folder_audio, freq_min, freq_max, max_learn):
 #    return [model, values_possible, silhouette_mean_clusters]
     return [model, values_possible]
 
-def main(args):
-    if not os.path.exists(args.folder_out):
-        os.makedirs(args.folder_out)
-
-#    model, values_possible, silhouette_score = learn_model(args.folder_audio,
-#                                                           args.freq_min,
-#                                                           args.freq_max,
-#                                                           args.max_learn)
-    model, values_possible = learn_model(args.folder_audio,
-                                         args.freq_min,
-                                         args.freq_max,
-                                         args.max_learn)
-
-#    plot_internal_indices.plot_silhouette(silhouette_score)
-
-    # plot result
-    LOGGER.info("Saving results")
-
+def forward_model(folder_out, folder_audio, model, values_possible, freq_min, freq_max):
     signal = []
     sample_rate = 0
-    for root, dirs, files in os.walk(args.folder_audio):
-        LOGGER.info("Saving in: " + args.folder_out)
+    for root, dirs, files in os.walk(folder_audio):
+        LOGGER.info("Saving in: " + folder_out)
         for file in files:
             path_to_file = os.path.join(root, file)
             try:
@@ -98,8 +90,8 @@ def main(args):
                 features_file = mfcc.get_mfcc_from_file(path_to_file,
                                                         windows=0.06,
                                                         shift=0.03,
-                                                        freq_min=args.freq_min,
-                                                        freq_max=args.freq_max,
+                                                        freq_min=freq_min,
+                                                        freq_max=freq_max,
                                                         n_mfcc=26,
                                                         energy=True)
             except Exception as e:
@@ -116,13 +108,41 @@ def main(args):
                 )
 
             filename_out, _ = os.path.splitext(file)
-            path_out = os.path.join(args.folder_out, filename_out + ".png")
+            path_out = os.path.join(folder_out, filename_out + ".png")
 
             plt_clusters.save_audio_with_cluster(path_out,
                                                  signal,
                                                  sample_rate,
                                                  m_clusters,
                                                  show_signal=False)
+
+def main(args):
+    if not os.path.exists(args.folder_out):
+        os.makedirs(args.folder_out)
+
+#    model, values_possible, silhouette_score = learn_model(args.folder_audio,
+#                                                           args.freq_min,
+#                                                           args.freq_max,
+#                                                           args.max_learn)
+    model, values_possible = learn_model(args.folder_audio,
+                                         args.freq_min,
+                                         args.freq_max,
+                                         args.max_learn)
+
+    save_obj(model, os.path.join(args.folder_out, 'model'))
+    save_obj(values_possible, os.path.join(args.folder_out, 'values_possible'))
+#    plot_internal_indices.plot_silhouette(silhouette_score)
+
+    # plot result
+    LOGGER.info("Saving results")
+    # TODO be more elgant with how to deal with features parameters
+    forward_model(args.folder_out,
+                  args.folder_audio,
+                  model,
+                  values_possible,
+                  args.freq_min,
+                  args.freq_max)
+
 
 if __name__ == '__main__':
     # prepare parser of arguments
