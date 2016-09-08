@@ -13,10 +13,17 @@ import plotting.plot_clusters as plt_clusters
 from plotting import plot_internal_indices
 
 def save_obj(obj, filename):
+    """
+        :param obj: object to save in a pickle file
+        :param filename: where the object will be saved
+    """
     with open(filename + '.pkl', 'wb') as file:
         pickle.dump(obj, file, pickle.HIGHEST_PROTOCOL)
 
 def load_obj(filename):
+    """
+        :param filename: where the object is saved
+    """
     with open(filename + '.pkl', 'rb') as file:
         return pickle.load(file)
 
