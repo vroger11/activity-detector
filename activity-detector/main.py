@@ -108,7 +108,7 @@ def forward_model(folder_out, folder_audio, model, values_possible, feature_extr
             # save results
             filename_out, _ = os.path.splitext(file)
             path_out_forwarded = os.path.join(folder_out, "forwarded/" + filename_out + ".txt")
-            np.savetxt(path_out_forwarded, clusters, delimiter=" ")
+            np.savetxt(path_out_forwarded, clusters, delimiter=" ", fmt='%i',)
 
             m_clusters = plt_clusters.vector_of_cluster_to_matrix(
                 clusters,
