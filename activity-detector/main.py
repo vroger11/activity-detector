@@ -32,7 +32,7 @@ def learn_model(folder_audio, feature_extractor, max_learn):
     LOGGER.info("Getting features")
     features = []
     file_taken = 0
-    for root, dirs, files in os.walk(folder_audio):
+    for root, _, files in os.walk(folder_audio):
         LOGGER.info("Getting features from: " + root)
 
         for file in files:
@@ -62,7 +62,7 @@ def learn_model(folder_audio, feature_extractor, max_learn):
                                     alpha=.5,
                                     verbose=0,
                                     covariance_type="diag")
-    predicted, values_possible = model.learn_model(features)
+    _, values_possible = model.learn_model(features)
     LOGGER.info("Done. Converged: " + str(model.dpgmm_model.converged_))
 
 # TODO find better indices performances
@@ -82,16 +82,16 @@ def learn_model(folder_audio, feature_extractor, max_learn):
 def forward_model(folder_out, folder_audio, model, values_possible, feature_extractor):
     signal = []
     sample_rate = 0
-    for root, dirs, files in os.walk(folder_audio):
+    for root, _, files in os.walk(folder_audio):
         LOGGER.info("Saving in: " + folder_out)
         for file in files:
             path_to_file = os.path.join(root, file)
             try:
                 signal, sample_rate = librosa.load(path_to_file, sr=None)
                 features_file = feature_extractor.get_mfcc(signal, sample_rate)
-            except Exception as e:
+            except Exception as exception:
                 LOGGER.warning("There is a problem with: " + path_to_file)
-                LOGGER.warning(e)
+                LOGGER.warning(exception)
                 continue
 
             features = mstats.zscore(features_file, axis=1, ddof=1)
@@ -132,6 +132,7 @@ def main(args):
 
     save_obj(model, os.path.join(args.folder_out, 'model'))
     save_obj(values_possible, os.path.join(args.folder_out, 'values_possible'))
+    save_obj(feature_extractor, os.path.join(args.folder_out, 'feature_extractor'))
 #    plot_internal_indices.plot_silhouette(silhouette_score)
 
     # plot result
