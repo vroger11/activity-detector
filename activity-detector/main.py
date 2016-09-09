@@ -112,8 +112,14 @@ def forward_model(folder_out, folder_audio, model, values_possible, feature_extr
                                                  show_signal=False)
 
 def main(args):
-    if not os.path.exists(args.folder_out):
-        os.makedirs(args.folder_out)
+    if not os.path.exists(os.path.join(args.folder_out, "model")):
+        os.makedirs(os.path.join(args.folder_out, "model"))
+
+    if not os.path.exists(os.path.join(args.folder_out, "figures")):
+        os.makedirs(os.path.join(args.folder_out, "figures"))
+
+    if not os.path.exists(os.path.join(args.folder_out, "forwarded")):
+        os.makedirs(os.path.join(args.folder_out, "forwarded"))
 
 #    model, values_possible, silhouette_score = learn_model(args.folder_audio,
 #                                                           args.freq_min,
@@ -168,8 +174,8 @@ if __name__ == '__main__':
 
     # configure logging
     with open('config/logging.json') as config_description:
-        config = ast.literal_eval(config_description.read())
-        logging.config.dictConfig(config)
+        config_log = ast.literal_eval(config_description.read())
+        logging.config.dictConfig(config_log)
 
     LOGGER = logging.getLogger('activityDetectorDefault')
     if ARGS.verbose:
