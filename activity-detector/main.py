@@ -6,11 +6,11 @@ import pickle
 import numpy as np
 import librosa
 from scipy.stats import mstats
-from sklearn import metrics
+#from sklearn import metrics
 from compute_clusters import gaussian_mixtures
 from compute_features.mfcc import FeatureMfcc
 import plotting.plot_clusters as plt_clusters
-from plotting import plot_internal_indices
+#from plotting import plot_internal_indices
 
 def save_obj(obj, filename):
     """
@@ -80,6 +80,13 @@ def learn_model(folder_audio, feature_extractor, max_learn):
     return [model, values_possible]
 
 def forward_model(folder_out, folder_audio, model, values_possible, feature_extractor):
+    if not os.path.exists(os.path.join(folder_out, "figures")):
+        os.makedirs(os.path.join(folder_out, "figures"))
+
+    if not os.path.exists(os.path.join(folder_out, "forwarded")):
+        os.makedirs(os.path.join(folder_out, "forwarded"))
+
+    LOGGER.info("Saving results")
     signal = []
     sample_rate = 0
     for root, _, files in os.walk(folder_audio):
@@ -97,15 +104,19 @@ def forward_model(folder_out, folder_audio, model, values_possible, feature_extr
             features = mstats.zscore(features_file, axis=1, ddof=1)
             features = np.transpose(features)
             clusters = model.predic_clusters(features)
+
+            # save results
+            filename_out, _ = os.path.splitext(file)
+            path_out_forwarded = os.path.join(folder_out, "forwarded/" + filename_out + ".txt")
+            np.savetxt(path_out_forwarded, clusters, delimiter=" ")
+
             m_clusters = plt_clusters.vector_of_cluster_to_matrix(
                 clusters,
                 values_possible=list(values_possible)
                 )
 
-            filename_out, _ = os.path.splitext(file)
-            path_out = os.path.join(folder_out, filename_out + ".png")
-
-            plt_clusters.save_audio_with_cluster(path_out,
+            path_out_image = os.path.join(folder_out, "figures/" + filename_out + ".png")
+            plt_clusters.save_audio_with_cluster(path_out_image,
                                                  signal,
                                                  sample_rate,
                                                  m_clusters,
@@ -114,12 +125,6 @@ def forward_model(folder_out, folder_audio, model, values_possible, feature_extr
 def main(args):
     if not os.path.exists(os.path.join(args.folder_out, "model")):
         os.makedirs(os.path.join(args.folder_out, "model"))
-
-    if not os.path.exists(os.path.join(args.folder_out, "figures")):
-        os.makedirs(os.path.join(args.folder_out, "figures"))
-
-    if not os.path.exists(os.path.join(args.folder_out, "forwarded")):
-        os.makedirs(os.path.join(args.folder_out, "forwarded"))
 
 #    model, values_possible, silhouette_score = learn_model(args.folder_audio,
 #                                                           args.freq_min,
@@ -136,13 +141,12 @@ def main(args):
                                          feature_extractor,
                                          args.max_learn)
 
-    save_obj(model, os.path.join(args.folder_out, 'model'))
-    save_obj(values_possible, os.path.join(args.folder_out, 'values_possible'))
-    save_obj(feature_extractor, os.path.join(args.folder_out, 'feature_extractor'))
+    save_obj(model, os.path.join(args.folder_out, 'model/model'))
+    save_obj(values_possible, os.path.join(args.folder_out, 'model/values_possible'))
+    save_obj(feature_extractor, os.path.join(args.folder_out, 'model/feature_extractor'))
 #    plot_internal_indices.plot_silhouette(silhouette_score)
 
     # plot result
-    LOGGER.info("Saving results")
     forward_model(args.folder_out,
                   args.folder_audio,
                   model,
