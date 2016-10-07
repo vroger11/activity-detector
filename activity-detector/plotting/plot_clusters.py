@@ -144,8 +144,7 @@ def _compute_figure(signal, sample_rate, cluster,
     axarr[id_subplot].axes.xaxis.set_ticks_position('bottom')
 
     # add grid
-    minorLocator = MultipleLocator(1)
-    axarr[id_subplot].yaxis.set_minor_locator(minorLocator)
+    axarr[id_subplot].yaxis.set_minor_locator(MultipleLocator(1))
 
     axarr[id_subplot].xaxis.grid(which='major', color='Black', linestyle='-', linewidth=0.5)
     axarr[id_subplot].yaxis.grid(which='major', color='Black', linestyle='-', linewidth=0.5)
