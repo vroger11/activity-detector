@@ -1,3 +1,8 @@
+"""
+    Module helping user to plot figure with clusters biside signal, spectrogram
+    or only the clusters among time
+"""
+
 import numpy as np
 import librosa
 import matplotlib.pyplot as plt
@@ -93,7 +98,8 @@ def save_audio_with_cluster(filename_out, signal, sample_rate, cluster,
     plt.close()
 
 
-def _compute_figure(signal, sample_rate, cluster, show_signal=True, show_spectrogram=True, max_frequency=None):
+def _compute_figure(signal, sample_rate, cluster,
+                    show_signal=True, show_spectrogram=True, max_frequency=None):
 
     total_subplots = 1 + show_signal + show_spectrogram
     figure, axarr = plt.subplots(total_subplots, sharex=True)
@@ -120,6 +126,8 @@ def _compute_figure(signal, sample_rate, cluster, show_signal=True, show_spectro
         axarr[id_subplot].set_title('Spectrogram')
         axarr[id_subplot].set_ylabel("Frequency in Hz")
         axarr[id_subplot].set_xticklabels([])
+        axarr[id_subplot].xaxis.grid(which='major', color='Black', linestyle='-', linewidth=0.25)
+        axarr[id_subplot].yaxis.grid(which='major', color='Black', linestyle='-', linewidth=0.25)
         id_subplot += 1
 
     # plot cluster
