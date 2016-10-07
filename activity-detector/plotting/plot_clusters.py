@@ -102,8 +102,8 @@ def _compute_figure(signal, sample_rate, cluster,
                     show_signal=True, show_spectrogram=True, max_frequency=None):
 
     total_subplots = 1 + show_signal + show_spectrogram
-    figure, axarr = plt.subplots(total_subplots, sharex=True)
-    plt.tight_layout(pad=0.51)
+    figure, axarr = plt.subplots(total_subplots, sharex=False)
+    plt.tight_layout(pad=-0.71)
 
     id_subplot = 0
     if show_signal:
@@ -141,7 +141,7 @@ def _compute_figure(signal, sample_rate, cluster,
                               cmap=cmap)
     axarr[id_subplot].set_ylabel("Cluster")
     axarr[id_subplot].set_xlabel("Time in seconds")
-    axarr[id_subplot].xaxis.set_ticks_position('bottom')
+    axarr[id_subplot].axes.xaxis.set_ticks_position('bottom')
 
     # add grid
     minorLocator = MultipleLocator(1)
