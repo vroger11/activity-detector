@@ -65,21 +65,9 @@ def learn_model(folder_audio, feature_extractor, max_learn):
     _, values_possible = model.learn_model(features)
     LOGGER.info("Done. Converged: " + str(model.dpgmm_model.converged_))
 
-# TODO find better indices performances
-    # evaluate silhouette indices
-#    silhouette_sample_score = metrics.silhouette_samples(features, predicted, metric='euclidean')
-#    silhouette_mean_clusters = np.zeros((1, len(values_possible)))
-#    predicted = np.array(predicted)
-#    k = 0
-#    for i in values_possible:
-#        index = np.where(predicted == i)
-#        silhouette_mean_clusters[k] = np.mean(silhouette_sample_score[index])
-#        k += 1
-#
-#    return [model, values_possible, silhouette_mean_clusters]
     return [model, values_possible]
 
-def forward_model(folder_out, folder_audio, model, values_possible, feature_extractor):
+def forward_model(folder_out, folder_audio, model, values_possible, feature_extractor, freq_max):
     if not os.path.exists(os.path.join(folder_out, "figures")):
         os.makedirs(os.path.join(folder_out, "figures"))
 
@@ -120,16 +108,12 @@ def forward_model(folder_out, folder_audio, model, values_possible, feature_extr
                                                  signal,
                                                  sample_rate,
                                                  m_clusters,
-                                                 show_signal=False)
+                                                 show_signal=False,
+                                                 max_frequency=freq_max)
 
 def main(args):
     if not os.path.exists(os.path.join(args.folder_out, "model")):
         os.makedirs(os.path.join(args.folder_out, "model"))
-
-#    model, values_possible, silhouette_score = learn_model(args.folder_audio,
-#                                                           args.freq_min,
-#                                                           args.freq_max,
-#                                                           args.max_learn)
 
     feature_extractor = FeatureMfcc(windows=0.06, shift=0.03,
                                     freq_min=args.freq_min,
@@ -144,6 +128,7 @@ def main(args):
     save_obj(model, os.path.join(args.folder_out, 'model/model'))
     save_obj(values_possible, os.path.join(args.folder_out, 'model/values_possible'))
     save_obj(feature_extractor, os.path.join(args.folder_out, 'model/feature_extractor'))
+    # TODO compute indices performances
 #    plot_internal_indices.plot_silhouette(silhouette_score)
 
     # plot result
@@ -151,7 +136,8 @@ def main(args):
                   args.folder_audio,
                   model,
                   values_possible,
-                  feature_extractor)
+                  feature_extractor,
+                  args.freq_max)
 
 
 if __name__ == '__main__':

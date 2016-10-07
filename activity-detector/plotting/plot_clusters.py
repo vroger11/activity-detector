@@ -67,7 +67,8 @@ def show_audio_with_cluster(signal, sample_rate, cluster, show_signal=True, show
     plt.show()
 
 def save_audio_with_cluster(filename_out, signal, sample_rate, cluster,
-                            show_signal=True, show_spectrogram=True):
+                            show_signal=True, show_spectrogram=True,
+                            max_frequency=None):
     '''
     compute the figure to show/save
 
@@ -76,18 +77,23 @@ def save_audio_with_cluster(filename_out, signal, sample_rate, cluster,
     :param cluster: matrix of s*n, were s is the clusters an n the of samples of the signal
     :param show_signal: show the subplot of the signal
     :param show_spectrogram: show the subplot of the spectrogram
+    :param max_frequency: max frequency to display in the spectrogram
     '''
+    if not max_frequency:
+        max_frequency = sample_rate
+
     figure = _compute_figure(signal=signal,
                              sample_rate=sample_rate,
                              cluster=cluster,
                              show_signal=show_signal,
-                             show_spectrogram=show_spectrogram)
+                             show_spectrogram=show_spectrogram,
+                             max_frequency=max_frequency)
 
     figure.savefig(filename_out, dpi=200, bbox_inches='tight', papertype='ledger')
     plt.close()
 
 
-def _compute_figure(signal, sample_rate, cluster, show_signal=True, show_spectrogram=True):
+def _compute_figure(signal, sample_rate, cluster, show_signal=True, show_spectrogram=True, max_frequency=None):
 
     total_subplots = 1 + show_signal + show_spectrogram
     figure, axarr = plt.subplots(total_subplots, sharex=True)
@@ -108,7 +114,7 @@ def _compute_figure(signal, sample_rate, cluster, show_signal=True, show_spectro
         [spectrum, freqs, times] = compute_spectrogram(signal, sample_rate)
         axarr[id_subplot].matshow(spectrum,
                                   origin='lower',
-                                  extent=(times[0], times[-1], freqs[0], freqs[-1]),
+                                  extent=(times[0], times[-1], freqs[0], max_frequency),
                                   aspect='auto')
 
         axarr[id_subplot].set_title('Spectrogram')
