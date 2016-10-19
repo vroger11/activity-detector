@@ -25,7 +25,7 @@ Don't forget to activate it using this project.
 ## Usage
 
 ### Plot activities (clusters) of data
-#### Learn a VDPMM. Usage:
+#### Learn a VDPMM model:
  ```bash
  python activity-detector/learn.py [-h] [-ml MAX_LEARN] [-v] [-l LOGFILE]
                 folder_audio_in folder_out min_frequency max_frequency
