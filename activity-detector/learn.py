@@ -53,7 +53,10 @@ def learn_model(folder_audio, feature_extractor, max_learn):
             try:
                 features_file = feature_extractor.get_mfcc_from_file(path_to_file)
             except Exception as exception:
-                LOGGER.warning("There is a problem while computing mfcc on: " + path_to_file)
+                LOGGER.warning("There is a problem while computing mfcc on: " +
+                               path_to_file + "\n" +
+                               exception
+                               )
                 continue
 
             features = np.hstack((features, features_file)) if features != [] else features_file
