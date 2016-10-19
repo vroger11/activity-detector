@@ -1,15 +1,17 @@
+"""
+    Use to learn a model
+"""
+
 import os
 import argparse
 import logging.config
 import ast
 import pickle
 import numpy as np
-import librosa
 from scipy.stats import mstats
 #from sklearn import metrics
 from compute_clusters import gaussian_mixtures
 from compute_features.mfcc import FeatureMfcc
-import plotting.plot_clusters as plt_clusters
 #from plotting import plot_internal_indices
 
 def save_obj(obj, filename):
@@ -20,14 +22,14 @@ def save_obj(obj, filename):
     with open(filename + '.pkl', 'wb') as file:
         pickle.dump(obj, file, pickle.HIGHEST_PROTOCOL)
 
-def load_obj(filename):
-    """
-        :param filename: where the object is saved
-    """
-    with open(filename + '.pkl', 'rb') as file:
-        return pickle.load(file)
-
 def learn_model(folder_audio, feature_extractor, max_learn):
+    """
+        :param folder_audio: folder where the audios are
+        :param feature_extractor: object use to extract features
+        :param max_learn: number of file used
+
+        :return: model learned
+    """
     # get features
     LOGGER.info("Getting features")
     features = []
@@ -44,7 +46,7 @@ def learn_model(folder_audio, feature_extractor, max_learn):
 
             try:
                 features_file = feature_extractor.get_mfcc_from_file(path_to_file)
-            except:
+            except Exception as exception:
                 LOGGER.warning("There is a problem while computing mfcc on: " + path_to_file)
                 continue
 
@@ -67,50 +69,6 @@ def learn_model(folder_audio, feature_extractor, max_learn):
 
     return [model, values_possible]
 
-def forward_model(folder_out, folder_audio, model, values_possible, feature_extractor, freq_max):
-    if not os.path.exists(os.path.join(folder_out, "figures")):
-        os.makedirs(os.path.join(folder_out, "figures"))
-
-    if not os.path.exists(os.path.join(folder_out, "forwarded")):
-        os.makedirs(os.path.join(folder_out, "forwarded"))
-
-    LOGGER.info("Saving results")
-    signal = []
-    sample_rate = 0
-    for root, _, files in os.walk(folder_audio):
-        LOGGER.info("Saving in: " + folder_out)
-        for file in files:
-            path_to_file = os.path.join(root, file)
-            try:
-                signal, sample_rate = librosa.load(path_to_file, sr=None)
-                features_file = feature_extractor.get_mfcc(signal, sample_rate)
-            except Exception as exception:
-                LOGGER.warning("There is a problem with: " + path_to_file)
-                LOGGER.warning(exception)
-                continue
-
-            features = mstats.zscore(features_file, axis=1, ddof=1)
-            features = np.transpose(features)
-            clusters = model.predic_clusters(features)
-
-            # save results
-            filename_out, _ = os.path.splitext(file)
-            path_out_forwarded = os.path.join(folder_out, "forwarded/" + filename_out + ".txt")
-            np.savetxt(path_out_forwarded, clusters, delimiter=" ", fmt='%i',)
-
-            m_clusters = plt_clusters.vector_of_cluster_to_matrix(
-                clusters,
-                values_possible=list(values_possible)
-                )
-
-            path_out_image = os.path.join(folder_out, "figures/" + filename_out + ".png")
-            plt_clusters.save_audio_with_cluster(path_out_image,
-                                                 signal,
-                                                 sample_rate,
-                                                 m_clusters,
-                                                 show_signal=False,
-                                                 max_frequency=freq_max)
-
 def main(args):
     if not os.path.exists(os.path.join(args.folder_out, "model")):
         os.makedirs(os.path.join(args.folder_out, "model"))
@@ -131,18 +89,11 @@ def main(args):
     # TODO compute indices performances
 #    plot_internal_indices.plot_silhouette(silhouette_score)
 
-    # plot result
-    forward_model(args.folder_out,
-                  args.folder_audio,
-                  model,
-                  values_possible,
-                  feature_extractor,
-                  args.freq_max)
-
 
 if __name__ == '__main__':
     # prepare parser of arguments
-    PARSER = argparse.ArgumentParser(description='Process the algorithm to segment the audio')
+    PARSER = argparse.ArgumentParser(
+        description='Process the algorithm to segment the audio and learn a model')
     PARSER.add_argument('folder_audio', metavar='folder_audio_in', type=str,
                         help='folder containing the audio files')
     PARSER.add_argument('folder_out', metavar='folder_out', type=str,

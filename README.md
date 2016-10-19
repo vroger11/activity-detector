@@ -24,9 +24,24 @@ Don't forget to activate it using this project.
 
 ## Usage
 
+### Plot activities (clusters) of data
+#### Learn a VDPMM. Usage:
+ ```bash
+ python activity-detector/learn.py [-h] [-ml MAX_LEARN] [-v] [-l LOGFILE]
+                folder_audio_in folder_out min_frequency max_frequency
+ ```
+Type ```python activity-detector/learn.py -h ``` for details.
+
+#### Forward the model previously learned and save the results (Plot + file of clusters)
+```bash
+python activity-detector/forward.py [-h] [-v] [-l LOGFILE]
+                folder_audio_in folder_model folder_out max_frequency
+```
+
+Type ```python activity-detector/forward.py -h ``` for details.
+
 ### Plot signal waveform and spectrogram of a file
 
-Will change in the future to be useful
 ```bash
   python activity-detector/plotting_clusters/plot_informations.py <audio filename>
 ```
@@ -40,16 +55,3 @@ Compute features from a folder of audio files. The output is csv files.
 ```
 
 Type ```python activity-detector/compute_features/mfcc.py -h ``` for details.
-
-### Get clusters
-Will come in the future
-
-### Plot activities (clusters) of data
-Learn a VDPMM and plot the clusters founds from it, save the figures in folder_out. Usage:
- ```bash
- python activity-detector/main.py [-h] [-ml MAX_LEARN] [-v] [-l LOGFILE]
-               folder_audio_in folder_out min_frequency max_frequency
- ```
-Type ```python activity-detector/main.py -h ``` for details.
-
-In the future it will evolve.
