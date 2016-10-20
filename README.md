@@ -28,8 +28,10 @@ Don't forget to activate it using this project.
 #### Learn a VDPMM model:
  ```bash
  python activity-detector/learn.py [-h] [-ml MAX_LEARN] [-v] [-l LOGFILE]
-                folder_audio_in folder_out min_frequency max_frequency
+                folder_audio_in folder_out config
  ```
+ ``` config ``` is a JSON file, it contains model, feature and other details. Look at config/example_config.json for an example.
+
 Type ```python activity-detector/learn.py -h ``` for details.
 
 #### Forward the model previously learned and save the results (Plot + file of clusters)

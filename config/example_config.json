@@ -1,0 +1,19 @@
+{
+  "name": "example_experience",
+  "feature": {
+    "name": "mfcc",
+    "window": 0.1,
+    "shift": 0.05,
+    "freq_min": 500,
+    "freq_max": 8000,
+    "n_mfcc": 26,
+    "energy": "True"
+  },
+  "model":{
+    "name": "DPGMM",
+    "n_components": 30,
+    "n_iter": 100,
+    "alpha": 0.5,
+    "covariance_type": "diag"
+  }
+}

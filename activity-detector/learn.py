@@ -15,15 +15,17 @@ from compute_clusters import gaussian_mixtures
 from compute_features.mfcc import FeatureMfcc
 #from plotting import plot_internal_indices
 
+
 def save_obj(obj, filename):
     """
         :param obj: object to save in a pickle file
         :param filename: where the object will be saved
     """
+
     with open(filename + '.pkl', 'wb') as file:
         pickle.dump(obj, file, pickle.HIGHEST_PROTOCOL)
 
-def learn_model(folder_audio, feature_extractor, max_learn):
+def learn_model(model, folder_audio, feature_extractor, max_learn):
     """
         :param folder_audio: folder where the audios are
         :param feature_extractor: object use to extract features
@@ -32,6 +34,7 @@ def learn_model(folder_audio, feature_extractor, max_learn):
 
         :return: model learned
     """
+
     # get features
     LOGGER.info("Getting features")
     features = []
@@ -39,7 +42,7 @@ def learn_model(folder_audio, feature_extractor, max_learn):
     for root, _, files in os.walk(folder_audio):
         LOGGER.info("Getting features from: " + root)
 
-        if (not max_learn is None):
+        if not max_learn is None:
             number_of_file = int(len(files)*max_learn)
             random.shuffle(files)
             files_to_learn = files[0:number_of_file]
@@ -54,9 +57,7 @@ def learn_model(folder_audio, feature_extractor, max_learn):
                 features_file = feature_extractor.get_mfcc_from_file(path_to_file)
             except Exception as exception:
                 LOGGER.warning("There is a problem while computing mfcc on: " +
-                               path_to_file + "\n" +
-                               exception
-                               )
+                               path_to_file)
                 continue
 
             features = np.hstack((features, features_file)) if features != [] else features_file
@@ -67,29 +68,67 @@ def learn_model(folder_audio, feature_extractor, max_learn):
 
     # learn model
     LOGGER.info("Learning model")
-    model = gaussian_mixtures.Model(n_components=30,
-                                    n_iter=100,
-                                    alpha=.5,
-                                    verbose=0,
-                                    covariance_type="diag")
     _, values_possible = model.learn_model(features)
     LOGGER.info("Done. Converged: " + str(model.dpgmm_model.converged_))
 
-    return [model, values_possible, file_taken]
+    return [values_possible, file_taken]
 
-def main(args):
+def configure_feature_extractor(feature_description):
+    """
+        :param feature_description: dictionnary containing feature description
+        :return: feature extractor
+
+        configure a feature extractor corresponding to feature_description
+    """
+
+    if feature_description['name'] == 'mfcc':
+        return FeatureMfcc(windows=feature_description['window'],
+                           shift=feature_description['shift'],
+                           freq_min=feature_description['freq_min'],
+                           freq_max=feature_description['freq_max'],
+                           n_mfcc=feature_description['n_mfcc'],
+                           energy=True)
+                           #energy=feature_description['energy'])
+    else:
+        LOGGER.warning("The feature is not recognized.")
+
+def configure_model(model_description):
+    """
+        :param feature_description: dictionnary containing model description
+        :return: model initialised
+
+        configure a model corresponding to model_description
+    """
+
+    if model_description['name'] == 'DPGMM':
+        return gaussian_mixtures.Model(n_components=model_description['n_components'],
+                                       n_iter=model_description['n_iter'],
+                                       alpha=model_description['alpha'],
+                                       verbose=0,
+                                       covariance_type=model_description['covariance_type'])
+    else:
+        LOGGER.warning("The model is not recognized.")
+
+def main(args, experience_description):
+    """
+        basic things to do when learning a model
+    """
+
     if not os.path.exists(os.path.join(args.folder_out, "model")):
         os.makedirs(os.path.join(args.folder_out, "model"))
+    else:
+        LOGGER.warning('Directory ' + os.path.join(args.folder_out, "model") +
+                       "already exists")
 
-    feature_extractor = FeatureMfcc(windows=0.06, shift=0.03,
-                                    freq_min=args.freq_min,
-                                    freq_max=args.freq_max,
-                                    n_mfcc=26,
-                                    energy=True)
+    # prepare feature extractor
+    feature_extractor = configure_feature_extractor(experience_description['feature'])
+    #prepare the model
+    model = configure_model(experience_description['model'])
 
-    model, values_possible, file_taken = learn_model(args.folder_audio,
-                                                     feature_extractor,
-                                                     args.max_learn)
+    values_possible, file_taken = learn_model(model,
+                                              args.folder_audio,
+                                              feature_extractor,
+                                              args.max_learn)
 
     save_obj(model, os.path.join(args.folder_out, 'model/model'))
     save_obj(values_possible, os.path.join(args.folder_out, 'model/values_possible'))
@@ -110,10 +149,9 @@ if __name__ == '__main__':
                         help='folder containing the audio files')
     PARSER.add_argument('folder_out', metavar='folder_out', type=str,
                         help='folder containing the results')
-    PARSER.add_argument('freq_min', metavar='min_frequency', type=int,
-                        help='minimum frequency')
-    PARSER.add_argument('freq_max', metavar='max_frequency', type=int,
-                        help='maximum frequency')
+    PARSER.add_argument('config', metavar='config', type=str,
+                        help='configuration file of the feature, model, ... used. ' +
+                        'See config/example.json for an example.')
     PARSER.add_argument('-ml', '--max_learn', type=float,
                         help='between 0 and 1, help to define the number of files' +
                         ' use in every folder. 1 means every file is used.\n' +
@@ -128,8 +166,11 @@ if __name__ == '__main__':
 
     # configure logging
     with open('config/logging.json') as config_description:
-        config_log = ast.literal_eval(config_description.read())
-        logging.config.dictConfig(config_log)
+        CONFIG_LOG = ast.literal_eval(config_description.read())
+        logging.config.dictConfig(CONFIG_LOG)
+
+    with open(ARGS.config) as config_description:
+        CONFIG_EXPERIENCE = ast.literal_eval(config_description.read())
 
     LOGGER = logging.getLogger('activityDetectorDefault')
     if ARGS.verbose:
@@ -139,4 +180,4 @@ if __name__ == '__main__':
         # TODO correct: the logs in the file should be the same as activityDetectorDefault
         LOGGER.addHandler(logging.handlers.RotatingFileHandler(ARGS.logFile))
 
-    main(ARGS)
+    main(ARGS, CONFIG_EXPERIENCE)
