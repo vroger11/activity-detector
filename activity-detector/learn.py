@@ -12,7 +12,7 @@ import numpy as np
 from scipy.stats import mstats
 #from sklearn import metrics
 from model import gaussian_mixtures
-from compute_features.mfcc import FeatureMfcc
+from compute_features.feature_extractor import configure_feature_extractor
 #from plotting import plot_internal_indices
 
 
@@ -72,25 +72,6 @@ def learn_model(model, folder_audio, feature_extractor, max_learn):
     LOGGER.info("Done. Converged: " + str(model.dpgmm_model.converged_))
 
     return [values_possible, file_taken]
-
-def configure_feature_extractor(feature_description):
-    """
-        :param feature_description: dictionnary containing feature description
-        :return: feature extractor
-
-        configure a feature extractor corresponding to feature_description
-    """
-
-    if feature_description['name'] == 'mfcc':
-        return FeatureMfcc(windows=feature_description['window'],
-                           shift=feature_description['shift'],
-                           freq_min=feature_description['freq_min'],
-                           freq_max=feature_description['freq_max'],
-                           n_mfcc=feature_description['n_mfcc'],
-                           energy=True)
-                           #energy=feature_description['energy'])
-    else:
-        LOGGER.warning("The feature is not recognized.")
 
 def configure_model(model_description):
     """
