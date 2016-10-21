@@ -24,7 +24,7 @@ class FeatureMfcc:
         if energy:
             self.n_mfcc -= 1
 
-    def get_mfcc_from_file(self, filename):
+    def get_feature_from_file(self, filename):
         '''
         cf get_mfcc for others parameters
 
@@ -37,10 +37,10 @@ class FeatureMfcc:
         except:
             raise
 
-        return self.get_mfcc(signal, sample_rate)
+        return self.get_feature(signal, sample_rate)
 
 
-    def get_mfcc(self, signal, sample_rate):
+    def get_feature(self, signal, sample_rate):
         '''
         compute the mfcc features corresponding to the parameters
 
