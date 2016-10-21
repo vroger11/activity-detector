@@ -1,9 +1,14 @@
-import librosa
+"""
+    module defining a mfcc extractor
+"""
+
 import numpy as np
+import librosa
+
 
 class FeatureMfcc:
     """
-        Feature extraction of mfcc
+        Feature extractor of mfcc
     """
 
     def __init__(self, windows, shift, energy=True, freq_min=1500, freq_max=8000, n_mfcc=13):
