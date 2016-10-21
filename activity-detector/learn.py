@@ -11,7 +11,7 @@ import random
 import numpy as np
 from scipy.stats import mstats
 #from sklearn import metrics
-from compute_clusters import gaussian_mixtures
+from model import gaussian_mixtures
 from compute_features.mfcc import FeatureMfcc
 #from plotting import plot_internal_indices
 
