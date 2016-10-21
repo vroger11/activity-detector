@@ -28,7 +28,6 @@ def forward_model(folder_out, folder_audio, model, values_possible, feature_extr
         os.makedirs(os.path.join(folder_out, "forwarded"))
 
     LOGGER.info("Saving results")
-    signal = []
     sample_rate = 0
     for root, _, files in os.walk(folder_audio):
         LOGGER.info("Saving in: " + folder_out)
@@ -98,8 +97,8 @@ if __name__ == '__main__':
 
     # configure logging
     with open('config/logging.json') as config_description:
-        config_log = ast.literal_eval(config_description.read())
-        logging.config.dictConfig(config_log)
+        CONFIG_LOG = ast.literal_eval(config_description.read())
+        logging.config.dictConfig(CONFIG_LOG)
 
     LOGGER = logging.getLogger('activityDetectorDefault')
     if ARGS.verbose:
