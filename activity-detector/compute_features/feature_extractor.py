@@ -1,6 +1,6 @@
 import logging
 from mfcc import FeatureMfcc
-
+from energy import FeatureEnergy
 
 def configure_feature_extractor(feature_description):
     """
@@ -17,6 +17,9 @@ def configure_feature_extractor(feature_description):
                            freq_max=feature_description['freq_max'],
                            n_mfcc=feature_description['n_mfcc'],
                            energy=feature_description['energy'])
+    elif feature_description['name'] == 'energy':
+        return FeatureEnergy(windows=feature_description['window'],
+                             shift=feature_description['shift'])
     else:
         LOGGER.warning("The feature is not recognized.")
 
