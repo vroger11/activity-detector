@@ -1,5 +1,5 @@
 # Activity-Detector
-Toolbox that allow the user identify unsupervised data on an audio signal.
+Toolbox for unsupervised audio signal learning.
 Currently on development, only few tools are available.
 
 ## Installation
