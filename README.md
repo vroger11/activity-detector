@@ -25,7 +25,7 @@ Don't forget to activate it using this project.
 ## Usage
 
 ### Plot activities (clusters) of data
-#### Learn a VDPMM model:
+#### Learn a model:
  ```bash
  python activity-detector/learn.py [-h] [-ml MAX_LEARN] [-v] [-l LOGFILE]
                 folder_audio_in folder_out config
@@ -47,13 +47,3 @@ Type ```python activity-detector/forward.py -h ``` for details.
 ```bash
   python activity-detector/plotting_clusters/plot_informations.py <audio filename>
 ```
-
-### Compute mfcc features
-Compute features from a folder of audio files. The output is csv files.
-```bash
-  python activity-detector/compute_features/mfcc.py [-v] [-l LOGFILE]
-               folder_audio_in folder_output window_features hop_time
-               [frequency_min] [frequency_max]
-```
-
-Type ```python activity-detector/compute_features/mfcc.py -h ``` for details.

@@ -1,9 +1,5 @@
-import os
-import argparse
-import logging.config
 import librosa
 import numpy as np
-import ast
 
 class FeatureMfcc:
     """
@@ -64,58 +60,3 @@ class FeatureMfcc:
             return np.vstack((energy_vec, mfcc))
         else:
             return mfcc
-
-
-if __name__ == '__main__':
-    # prepare parser of arguments
-    parser = argparse.ArgumentParser(description='Process mfcc of some files in a folder')
-    parser.add_argument('folder_audio', metavar='folder_audio_in', type=str,
-                        help='folder containing the audio files')
-    parser.add_argument('folder_output', metavar='folder_output', type=str,
-                        help='folder where the resulting files will be put')
-    parser.add_argument('windows', metavar='window_features', type=float,
-                        help='windows of the mfcc (in seconds)')
-    parser.add_argument('shift', metavar='hop_time', type=float,
-                        help='hoptime (in seconds)')
-    parser.add_argument('freq_min', metavar='frequency_min', type=int,
-                        help='minimum frequency (in Hertz) looked at', nargs='?', default=1200)
-    parser.add_argument('freq_max', metavar='frequency_max', type=int,
-                        help='maximum frequency (in Hertz) looked at', nargs='?', default=8000)
-    parser.add_argument('-v', '--verbose', action='store_true', help='Show every log')
-    parser.add_argument('-l', '--logFile', type=str, help='File where the logs will be saved', default=None)
-
-    # parse arguments
-    args = parser.parse_args()
-
-    # configure logging
-    with open('config/logging.json') as f:
-        config = ast.literal_eval(f.read())
-        logging.config.dictConfig(config)
-
-    logger = logging.getLogger('activityDetectorDefault')
-    if args.verbose:
-        logger.setLevel(logging.DEBUG)
-
-    if args.logFile:
-        # TODO correct: the logs in the file should be the same as activityDetectorDefault
-        logger.addHandler(logging.handlers.RotatingFileHandler(args.logFile))
-
-    # program begins
-    files = os.listdir(args.folder_audio)
-
-    ##get features
-    compute_features = FeatureMfcc(windows=args.windows, shift=args.shift,
-                                   freq_min=args.freq_min, freq_max=args.freq_max)
-    logger.info("Getting features")
-    features = []
-    for file in files:
-        logger.info("Getting features from: " + file)
-        path_to_file = os.path.normpath(args.folder_audio + "/" + file)
-        try:
-            features_file = compute_features.get_mfcc_from_file(path_to_file)
-        except:
-            logger.warning("There is a problem while reading: " + path_to_file)
-            continue
-
-        # write into a csv file
-        np.savetxt(args.folder_output + file + ".csv", features_file, delimiter=",")
