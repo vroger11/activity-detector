@@ -10,9 +10,9 @@ import pickle
 import random
 import numpy as np
 from scipy.stats import mstats
-#from sklearn import metrics
-from model import gaussian_mixtures
+from models.config_model import configure_model
 from compute_features.config_extractor import configure_feature_extractor
+#from sklearn import metrics
 #from plotting import plot_internal_indices
 
 
@@ -72,23 +72,6 @@ def learn_model(model, folder_audio, feature_extractor, max_learn):
     LOGGER.info("Done. Converged: " + str(model.dpgmm_model.converged_))
 
     return [values_possible, file_taken]
-
-def configure_model(model_description):
-    """
-        :param feature_description: dictionnary containing model description
-        :return: model initialised
-
-        configure a model corresponding to model_description
-    """
-
-    if model_description['name'] == 'DPGMM':
-        return gaussian_mixtures.Model(n_components=model_description['n_components'],
-                                       n_iter=model_description['n_iter'],
-                                       alpha=model_description['alpha'],
-                                       verbose=0,
-                                       covariance_type=model_description['covariance_type'])
-    else:
-        LOGGER.warning("The model is not recognized.")
 
 def main(args, experience_description):
     """
