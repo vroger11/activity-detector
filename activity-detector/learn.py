@@ -55,7 +55,7 @@ def learn_model(model, folder_audio, feature_extractor, max_learn):
 
             try:
                 features_file = feature_extractor.get_feature_from_file(path_to_file)
-            except Exception as exception:
+            except Exception:
                 LOGGER.warning("There is a problem while computing mfcc on: " +
                                path_to_file)
                 continue
