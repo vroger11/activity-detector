@@ -3,9 +3,10 @@
 """
 
 import librosa
+from .feature_extractor import FeatureExtractor
 
 
-class FeatureEnergy:
+class FeatureEnergy(FeatureExtractor):
     """
         Feature extractor of energy
     """
@@ -18,20 +19,6 @@ class FeatureEnergy:
 
         self.windows = windows
         self.shift = shift
-
-    def get_feature_from_file(self, filename):
-        """
-            :param filename: the path of the audio file
-
-            :return: the mfcc corresponding to all parameters
-        """
-
-        try:
-            signal, sample_rate = librosa.load(filename, sr=None)
-        except:
-            raise
-
-        return self.get_feature(signal, sample_rate)
 
     def get_feature(self, signal, sample_rate):
         '''

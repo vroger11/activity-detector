@@ -1,6 +1,10 @@
+"""
+    Provide a function to initialize any feature extractor from a dictionnary
+"""
 import logging
-from mfcc import FeatureMfcc
-from energy import FeatureEnergy
+from .extractor.mfcc import FeatureMfcc
+from .extractor.energy import FeatureEnergy
+
 
 def configure_feature_extractor(feature_description):
     """
@@ -22,5 +26,6 @@ def configure_feature_extractor(feature_description):
                              shift=feature_description['shift'])
     else:
         LOGGER.warning("The feature is not recognized.")
+
 
 LOGGER = logging.getLogger('activityDetectorDefault')

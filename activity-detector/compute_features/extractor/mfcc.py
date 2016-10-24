@@ -4,9 +4,10 @@
 
 import numpy as np
 import librosa
+from .feature_extractor import FeatureExtractor
 
 
-class FeatureMfcc:
+class FeatureMfcc(FeatureExtractor):
     """
         Feature extractor of mfcc
     """
@@ -28,22 +29,6 @@ class FeatureMfcc:
 
         if energy:
             self.n_mfcc -= 1
-
-    def get_feature_from_file(self, filename):
-        '''
-        cf get_mfcc for others parameters
-
-        :param filename: the path of the audio file
-        :return: the mfcc corresponding to all parameters
-        '''
-
-        try:
-            signal, sample_rate = librosa.load(filename, sr=None)
-        except:
-            raise
-
-        return self.get_feature(signal, sample_rate)
-
 
     def get_feature(self, signal, sample_rate):
         '''

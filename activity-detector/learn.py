@@ -12,7 +12,7 @@ import numpy as np
 from scipy.stats import mstats
 #from sklearn import metrics
 from model import gaussian_mixtures
-from compute_features.feature_extractor import configure_feature_extractor
+from compute_features.config_extractor import configure_feature_extractor
 #from plotting import plot_internal_indices
 
 
