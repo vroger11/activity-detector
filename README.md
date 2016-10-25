@@ -34,13 +34,21 @@ Don't forget to activate it using this project.
 
 Type ```python activity-detector/learn.py -h ``` for details.
 
-#### Forward the model previously learned and save the results (Plot + file of clusters)
+#### Forward the model previously learned
 ```bash
 python activity-detector/forward.py [-h] [-v] [-l LOGFILE]
-                folder_audio_in folder_model folder_out max_frequency
+                  folder_audio_in folder_model folder_out
 ```
 
 Type ```python activity-detector/forward.py -h ``` for details.
+
+#### Plot forwarded data (Plot of clusters)
+```bash
+python activity-detector/plot_forwarded.py [-h] [-v] [-l LOGFILE]
+                         folder_forwarded folder_out max_frequency
+```
+
+Type ```python activity-detector/plot_forwarded.py -h``` for details.
 
 ### Plot signal waveform and spectrogram of a file
 
