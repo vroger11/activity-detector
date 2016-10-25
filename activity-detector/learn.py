@@ -12,8 +12,6 @@ from scipy.stats import mstats
 from models.config_model import configure_model
 from compute_features.config_extractor import configure_feature_extractor
 from tools.manipulate_objects import save_obj
-#from sklearn import metrics
-#from plotting import plot_internal_indices
 
 
 def learn_model(model, folder_audio, feature_extractor, max_learn):
@@ -91,9 +89,6 @@ def main(args, experience_description):
     file_out_taken = open(os.path.join(args.folder_out, 'model/file_taken.txt'), 'w')
     for item in file_taken:
         file_out_taken.write("%s\n" % item)
-
-    # TODO compute indices performances
-#    plot_internal_indices.plot_silhouette(silhouette_score)
 
 
 if __name__ == '__main__':
