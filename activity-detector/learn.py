@@ -6,24 +6,15 @@ import os
 import argparse
 import logging.config
 import ast
-import pickle
 import random
 import numpy as np
 from scipy.stats import mstats
 from models.config_model import configure_model
 from compute_features.config_extractor import configure_feature_extractor
+from tools.manipulate_objects import save_obj
 #from sklearn import metrics
 #from plotting import plot_internal_indices
 
-
-def save_obj(obj, filename):
-    """
-        :param obj: object to save in a pickle file
-        :param filename: where the object will be saved
-    """
-
-    with open(filename + '.pkl', 'wb') as file:
-        pickle.dump(obj, file, pickle.HIGHEST_PROTOCOL)
 
 def learn_model(model, folder_audio, feature_extractor, max_learn):
     """

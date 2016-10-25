@@ -7,18 +7,11 @@ import argparse
 import logging.config
 import ast
 import numpy as np
-import pickle
 from scipy.stats import mstats
 import librosa
 import plotting.plot_clusters as plt_clusters
+from tools.manipulate_objects import load_obj
 
-
-def load_obj(filename):
-    """
-        :param filename: where the object is saved
-    """
-    with open(filename + '.pkl', 'rb') as file:
-        return pickle.load(file)
 
 def forward_model(folder_out, folder_audio, model, values_possible, feature_extractor, freq_max):
     if not os.path.exists(os.path.join(folder_out, "figures")):
