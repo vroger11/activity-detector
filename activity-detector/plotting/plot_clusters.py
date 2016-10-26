@@ -30,7 +30,7 @@ def show_audio(filename):
 
     # read the audio file
     # plot the waveform
-    signal, sample_rate = librosa.load(filename, sr=None)
+    signal, sample_rate = librosa.load(filename, sr=None, mono=None)
 
     _, axarr = plt.subplots(2, sharex=True)
     time = np.linspace(0, len(signal) / sample_rate, num=len(signal))

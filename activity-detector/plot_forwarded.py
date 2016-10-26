@@ -31,7 +31,7 @@ def plot_forwarded(folder_out, folder_audio, folder_forwarded, values_possible, 
         for file in files:
             path_to_file = os.path.join(root, file)
             try:
-                signal, sample_rate = librosa.load(path_to_file, sr=None)
+                signal, sample_rate = librosa.load(path_to_file, sr=None,  mono=None)
             except Exception as exception:
                 LOGGER.warning("There is a problem with: " + path_to_file)
                 LOGGER.warning(exception)

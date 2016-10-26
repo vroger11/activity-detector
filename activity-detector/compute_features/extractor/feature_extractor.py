@@ -17,7 +17,7 @@ class FeatureExtractor():
         """
 
         try:
-            signal, sample_rate = librosa.load(filename, sr=None)
+            signal, sample_rate = librosa.load(filename, sr=None, mono=None)
         except:
             raise
 
