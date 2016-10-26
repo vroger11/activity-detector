@@ -35,8 +35,12 @@ def forward_model(folder_out, folder_audio, model, feature_extractor):
             clusters = model.predic_clusters(features)
 
             # save results
-            filename_out, _ = os.path.splitext(file)
-            path_out_forwarded = os.path.join(folder_out, "clusters/" + filename_out + ".txt")
+            file_out, _ = os.path.splitext(file)
+            path_out_forwarded = os.path.join(folder_out, "clusters/" + root.replace(folder_audio, ''))
+            if not os.path.exists(path_out_forwarded):
+                os.makedirs(path_out_forwarded)
+
+            path_out_forwarded = os.path.join(path_out_forwarded, file_out + ".txt")
             np.savetxt(path_out_forwarded, clusters, delimiter=" ", fmt='%i',)
 
 def main(args):

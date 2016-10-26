@@ -39,7 +39,9 @@ def plot_forwarded(folder_out, folder_audio, folder_forwarded, values_possible, 
 
             # save results
             filename_out, _ = os.path.splitext(file)
-            path_out_forwarded = os.path.join(folder_forwarded, filename_out + ".txt")
+            subfolders = root.replace(folder_audio, '')
+            path_out_forwarded = os.path.join(folder_forwarded, subfolders)
+            path_out_forwarded = os.path.join(path_out_forwarded, filename_out + ".txt")
             clusters = np.loadtxt(path_out_forwarded, delimiter=" ")
 
             m_clusters = plt_clusters.vector_of_cluster_to_matrix(
@@ -47,7 +49,11 @@ def plot_forwarded(folder_out, folder_audio, folder_forwarded, values_possible, 
                 values_possible=list(values_possible)
                 )
 
-            path_out_image = os.path.join(folder_out, filename_out + ".png")
+            path_out_image = os.path.join(folder_out, subfolders)
+            if not os.path.exists(path_out_image):
+                os.makedirs(path_out_image)
+
+            path_out_image = os.path.join(path_out_image, filename_out + ".png")
             plt_clusters.save_audio_with_cluster(path_out_image,
                                                  signal,
                                                  sample_rate,
