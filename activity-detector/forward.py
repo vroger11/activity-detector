@@ -23,8 +23,7 @@ def forward_model(folder_out, folder_audio, model, feature_extractor):
         for file in files:
             path_to_file = os.path.join(root, file)
             try:
-                signal, sample_rate = librosa.load(path_to_file, sr=None, mono=False)
-                features_file = feature_extractor.get_feature(signal, sample_rate)
+                features_file = feature_extractor.get_feature_from_file(path_to_file)
             except Exception as exception:
                 LOGGER.warning("There is a problem with: " + path_to_file)
                 LOGGER.warning(exception)
