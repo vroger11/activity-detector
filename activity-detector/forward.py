@@ -28,6 +28,7 @@ def forward_model(folder_out, folder_audio, model, feature_extractor):
                 LOGGER.warning(exception)
                 continue
 
+            # normalize the feature
             features = mstats.zscore(features_file, axis=1, ddof=1)
             features = np.transpose(features)
             clusters = model.predic_clusters(features)

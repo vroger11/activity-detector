@@ -49,9 +49,10 @@ def learn_model(model, folder_audio, feature_extractor, max_learn):
                                path_to_file)
                 continue
 
+            # normalize the feature
+            features_file = mstats.zscore(features_file, axis=1, ddof=1)
             features = np.hstack((features, features_file)) if features != [] else features_file
 
-    features = mstats.zscore(features, axis=1, ddof=1)
     # model require n*d; with n the number of observations and d the dimension of an observation
     features = np.transpose(features)
 
