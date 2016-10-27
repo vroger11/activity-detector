@@ -4,9 +4,9 @@
 """
 
 import numpy as np
-import librosa
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
+import librosa
 
 
 def compute_spectrogram(signal, sample_rate):
@@ -82,10 +82,9 @@ def save_audio_with_cluster(filename_out, signal, sample_rate, cluster,
     :param cluster: matrix of s*n, were s is the clusters an n the of samples of the signal
     :param show_signal: show the subplot of the signal
     :param show_spectrogram: show the subplot of the spectrogram
-    :param max_frequency: max frequency to display in the spectrogram
+    :param max_frequency: max frequency to display in the spectrogram, if None it will show
+                          the whole spectrogram
     '''
-    if not max_frequency:
-        max_frequency = sample_rate
 
     figure = _compute_figure(signal=signal,
                              sample_rate=sample_rate,
