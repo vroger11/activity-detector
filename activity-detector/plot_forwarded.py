@@ -22,6 +22,10 @@ def plot_forwarded(folder_out, folder_audio, folder_forwarded, values_possible, 
         :param values_possible:
         :param freq_max: maximum frequency
     """
+
+    plotter = plt_clusters.PlotClusters(show_signal=False,
+                                        show_spectrogram=True,
+                                        max_frequency=freq_max)
     if not os.path.exists(folder_out):
         os.makedirs(folder_out)
 
@@ -54,12 +58,10 @@ def plot_forwarded(folder_out, folder_audio, folder_forwarded, values_possible, 
                 os.makedirs(path_out_image)
 
             path_out_image = os.path.join(path_out_image, filename_out + ".png")
-            plt_clusters.save_audio_with_cluster(path_out_image,
-                                                 signal,
-                                                 sample_rate,
-                                                 m_clusters,
-                                                 show_signal=False,
-                                                 max_frequency=freq_max)
+            plotter.save_audio_with_cluster(path_out_image,
+                                            signal,
+                                            sample_rate,
+                                            m_clusters)
 
 def main(args):
     # get model
