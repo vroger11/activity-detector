@@ -35,7 +35,7 @@ def plot_forwarded(folder_out, folder_audio, folder_forwarded, values_possible, 
         for file in files:
             path_to_file = os.path.join(root, file)
             try:
-                signal, sample_rate = librosa.load(path_to_file, sr=None,  mono=None)
+                signal, sample_rate = librosa.load(path_to_file, sr=None, mono=None)
             except Exception as exception:
                 LOGGER.warning("There is a problem with: " + path_to_file)
                 LOGGER.warning(exception)
@@ -58,10 +58,10 @@ def plot_forwarded(folder_out, folder_audio, folder_forwarded, values_possible, 
                 os.makedirs(path_out_image)
 
             path_out_image = os.path.join(path_out_image, filename_out + ".png")
-            plotter.save_audio_with_cluster(path_out_image,
-                                            signal,
-                                            sample_rate,
-                                            m_clusters)
+            plotter.save_clusters(path_out_image,
+                                  signal,
+                                  sample_rate,
+                                  m_clusters)
 
 def main(args):
     # get model

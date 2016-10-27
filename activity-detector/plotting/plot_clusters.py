@@ -1,5 +1,5 @@
 """
-    Module helping user to plot figure with clusters biside signal, spectrogram
+    Module helping user to plot figures with clusters biside signal, spectrogram
     or only the clusters among time
 """
 
@@ -24,7 +24,7 @@ class PlotClusters:
         self.show_spectrogram = show_spectrogram
         self.max_frequency = max_frequency
 
-    def show_audio_with_cluster(self, signal, sample_rate, cluster):
+    def show_clusters(self, signal, sample_rate, clusters):
         """
             plot the signal waveform, spectogram and cluster corresponding to the signal
             cluster must have the same scale as signal
@@ -36,28 +36,28 @@ class PlotClusters:
 
         figure = self._compute_figure(signal=signal,
                                       sample_rate=sample_rate,
-                                      cluster=cluster)
+                                      clusters=clusters)
         figure.show()
         plt.show()
 
-    def save_audio_with_cluster(self, filename_out, signal, sample_rate, cluster):
+    def save_clusters(self, filename_out, signal, sample_rate, clusters):
         """
             compute the figure to show/save
 
             :param signal: one channel signal
             :param sample_rate: sampling frequency (in Hz)
-            :param cluster: matrix of s*n, were s is the clusters an n the of samples of the signal
+            :param clusters: matrix of s*n, were s is the clusters an n the of samples of the signal
         """
 
         figure = self._compute_figure(signal=signal,
                                       sample_rate=sample_rate,
-                                      cluster=cluster)
+                                      clusters=clusters)
 
         figure.savefig(filename_out, dpi=200, bbox_inches='tight', papertype='ledger')
         plt.close()
 
 
-    def _compute_figure(self, signal, sample_rate, cluster):
+    def _compute_figure(self, signal, sample_rate, clusters):
 
         total_subplots = 1 + self.show_signal + self.show_spectrogram
         figure, axarr = plt.subplots(total_subplots, sharex=False)
@@ -98,7 +98,7 @@ class PlotClusters:
             id_subplot += 1
 
         # plot cluster
-        cluster = np.matrix(cluster)
+        cluster = np.matrix(clusters)
         dim_x, _ = cluster.shape
         cmap = plt.get_cmap("nipy_spectral")
         axarr[id_subplot].matshow(cluster,
