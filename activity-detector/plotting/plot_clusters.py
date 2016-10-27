@@ -6,7 +6,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
-import librosa
 
 
 def compute_spectrogram(signal, sample_rate):
@@ -20,37 +19,6 @@ def compute_spectrogram(signal, sample_rate):
     spectrum = 10. * np.log10(spectrum)
 
     return [spectrum, freqs, times]
-
-def show_audio(filename):
-    '''
-    show the waveform and the spectogram on the signal from filename
-    :param filename: path to the file containing an audio signal
-    :return: None
-    '''
-
-    # read the audio file
-    # plot the waveform
-    signal, sample_rate = librosa.load(filename, sr=None, mono=None)
-
-    _, axarr = plt.subplots(2, sharex=True)
-    time = np.linspace(0, len(signal) / sample_rate, num=len(signal))
-    axarr[0].plot(time, signal)
-    axarr[0].set_title('Waveform')
-    axarr[0].set_ylabel("Amplitude")
-
-    # plot the spectgram
-    [spectrum, freqs, times] = compute_spectrogram(signal, sample_rate)
-
-    axarr[1].matshow(spectrum,
-                     origin='lower',
-                     extent=(times[0], times[-1], freqs[0], freqs[-1]),
-                     aspect='auto')
-    axarr[1].set_label_position('bottom')
-    axarr[1].set_title('Spectrogram')
-    axarr[1].set_ylabel("Frequency in Hz")
-    axarr[1].set_xlabel("Time in seconds")
-
-    plt.show()
 
 def show_audio_with_cluster(signal, sample_rate, cluster, show_signal=True, show_spectrogram=True):
     '''
