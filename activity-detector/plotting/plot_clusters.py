@@ -117,7 +117,14 @@ def _compute_figure(signal, sample_rate, cluster,
     if show_spectrogram:
         # plot the spectgram
         [spectrum, freqs, times] = compute_spectrogram(signal, sample_rate)
-        axarr[id_subplot].matshow(spectrum,
+        if max_frequency is None:
+            max_frequency = freqs[-1]
+            _, index_frequency = spectrum.shape
+        else:
+            index_frequency = np.argmax(freqs >= max_frequency)
+            max_frequency = freqs[index_frequency]
+
+        axarr[id_subplot].matshow(spectrum[0:index_frequency+1, :],
                                   origin='lower',
                                   extent=(times[0], times[-1], freqs[0], max_frequency),
                                   aspect='auto')
